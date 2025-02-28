@@ -15,7 +15,10 @@
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+  height: 100vh;
+  color: var(--background);
+  background: url(../../public/assets/images/background-desktop.png);
+  background-size: 100vw 100vh;
+  background-repeat: no-repeat;
   font-family: Arial, Helvetica, sans-serif;
 }
