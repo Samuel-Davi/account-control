@@ -1,13 +1,13 @@
 'use client'
 
-import { getCookie } from "cookies-next";
+import { getCookie, setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import { createContext, useEffect, useState } from "react";
 import { api } from "../services/api";
 
 
 type User = {
-    token: string;
+    token: string | null;
     name: string;
     email: string;
     avatarUrl: string;
@@ -33,15 +33,37 @@ export function AuthProvider({ children }: any){
     const [error, setError] = useState("");
     const router = useRouter()
 
+    const carregaDados = (data:any) => {
+        //console.log("data: ", data)
+        const loadUser:User = {
+            token: null,
+            name: data.name,
+            email: data.email,
+            avatarUrl: data.avatarUrl,
+        }
+        setUser(loadUser)
+        
+    }
+
+    useEffect(() => {
+        //console.log("user setado: ", user)
+    }, [user])
+
     useEffect(() => {
         const fetchData = async () => {
-            const token = getCookie("accountcontrol-token")
+            const token = await getCookie("account-token")
     
             if (token) {
-                const res = await fetch('/services/cookies')
-                const user = await res.json()
-                console.log("teste")
-                console.log(user)
+                fetch("/services/user", {
+                    method: "GET",
+                    headers: {
+                      "Authorization": `Bearer ${token}`,
+                      "Content-Type": "application/json"
+                    }
+                  })
+                  .then(response => response.json())
+                  .then(data => carregaDados(data.user))
+                  .catch(error => console.error("Erro:", error));
             }
         }
 
@@ -61,7 +83,9 @@ export function AuthProvider({ children }: any){
         const resUser:User = await res.json()
         setUser(resUser)
 
-        api.defaults.headers['Authorization'] = `Bearer ${resUser.token}`
+        setCookie("account-token", resUser.token, { httpOnly: false, maxAge: 3600 });
+
+        //api.defaults.headers['Authorization'] = `Bearer ${resUser.token}`
 
         router.push('/dashboard')
     }

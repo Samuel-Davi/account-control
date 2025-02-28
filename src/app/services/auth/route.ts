@@ -21,7 +21,7 @@ export async function POST(req:Request){
     // Gera o token JWT
     const token = jwt.sign({ id: mockUser.id, email: mockUser.email }, SECRET, { expiresIn: "1h" });
 
-    // Salva o token no cookie
+    // Salva o token no usuario
 
     const user = {
         token: token,
@@ -30,9 +30,7 @@ export async function POST(req:Request){
         avatarUrl: 'https://github.com/Samuel-Davi.png',
     }
 
-    const res = NextResponse.json({ token: token, name: user.name, email: user.email, avatarUrl: user.avatarUrl },
-        { status: 200 });
-    setCookie("account-token", token, { res, httpOnly: false, maxAge: 3600 });
+    const res = NextResponse.json(user, { status: 200 });
 
     return res
 }
