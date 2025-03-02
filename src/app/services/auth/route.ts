@@ -1,3 +1,4 @@
+import { SignInData } from "@/app/contexts/AuthContext";
 import bcrypt from "bcryptjs";
 import { setCookie } from "cookies-next";
 import jwt from "jsonwebtoken";
@@ -11,15 +12,24 @@ const mockUser = {
 
 const SECRET = "chave_super_secreta";
 
+const setToken = async (timeToken:string) => {
+    if(timeToken === "1h"){
+        return jwt.sign({ id: mockUser.id, email: mockUser.email }, SECRET, { expiresIn: "1h" });
+    }else{
+        return jwt.sign({ id: mockUser.id, email: mockUser.email }, SECRET, { expiresIn: "30d" });
+    }
+}
 export async function POST(req:Request){
-    const {email, password} = await req.json();
+    const {email, password, timeToken}: SignInData = await req.json();
+    console.log("timetoken: ", timeToken)
 
     if (email !== mockUser.email || !bcrypt.compareSync(password, mockUser.password)){
         return NextResponse.json({ error: "Usuário ou senha inválidos"}, { status: 401 });
     }
 
     // Gera o token JWT
-    const token = jwt.sign({ id: mockUser.id, email: mockUser.email }, SECRET, { expiresIn: "1h" });
+    let token = await setToken(timeToken)
+    
 
     // Salva o token no usuario
 

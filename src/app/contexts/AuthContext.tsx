@@ -13,16 +13,20 @@ type User = {
     avatarUrl: string;
 }
 
-type SignInData = {
+export type SignInData = {
     email: string;
     password: string;
+    timeToken: string;
 }
 
 type AuthContextType = {
     isAuthenticated: boolean;
     user: User | null;
+    error: boolean;
     signIn: (data: SignInData) => Promise<void>;
 }
+
+const delay = (amount = 750) => new Promise(resolve => setTimeout(resolve, amount))
 
 export const AuthContext = createContext({} as AuthContextType);
 
@@ -30,7 +34,7 @@ export function AuthProvider({ children }: any){
     const isAuthenticated = false;
 
     const [user, setUser] = useState<User | null>(null)
-    const [error, setError] = useState("");
+    const [error, setError] = useState(false);
     const router = useRouter()
 
     const carregaDados = (data:any) => {
@@ -70,14 +74,16 @@ export function AuthProvider({ children }: any){
         fetchData()
       }, [])
 
-    async function signIn({email, password} : SignInData){
+    async function signIn({email, password, timeToken} : SignInData){
         const res = await fetch("/services/auth", {
             method: "POST",
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({ email, password, timeToken }),
             headers: { "Content-Type": "application/json" },
           });
         if (!res.ok){
-            setError("Falha ao fazer login")
+            setError(true)
+            await delay()
+            setError(false)
             return
         }
         const resUser:User = await res.json()
@@ -91,7 +97,7 @@ export function AuthProvider({ children }: any){
     }
 
     return (
-        <AuthContext.Provider value={{ user , isAuthenticated, signIn }}>
+        <AuthContext.Provider value={{ error, user , isAuthenticated, signIn }}>
             {children}
         </AuthContext.Provider>
     )

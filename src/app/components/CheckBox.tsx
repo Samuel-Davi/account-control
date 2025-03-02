@@ -1,16 +1,18 @@
 interface CheckboxProps {
     name: string;
     label: string;
-    defaultChecked?: boolean;
+    isChecked?: boolean;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   }
   
-  export default function Checkbox({ label, name, defaultChecked }: CheckboxProps) {
+  export default function Checkbox({ label, name, onChange, isChecked }: CheckboxProps) {
     return (
       <label className="flex items-center space-x-2 cursor-pointer">
         <input
           type="checkbox"
           name={name}
-          defaultChecked={defaultChecked}
+          checked={isChecked}
+          onChange={onChange}
           className="w-5 h-5 text-white cursor-pointer rounded-xl"
         />
         <span className="text-white">{label}</span>
