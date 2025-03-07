@@ -35,36 +35,77 @@ export default function FirstPage(){
   }, [error])
 
   return (
-    <div className="flex flex-col justify-center items-center h-screen">
-      <form onSubmit={handleSubmit(SignIn)} className='flex flex-col items-center justify-around h-1/2 w-2/5'>
-        <h1 className='mb-4 text-5xl font-bold text-white'>Roxyall Control</h1>
-        <input
-        
-        {...register('email', {
-          onChange: (e) => setEmail(e.target.value)
-        })}
-        value={email}
-        id='email'
-        type='email'
-        placeholder="email"
-        className="w-3/4 p-1 m-1 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-        />
-        <input
-        {...register('password', {
-          onChange: (e) => setPassword(e.target.value)
-        })}
-        value={password}
-        id='password'
-        type='password' 
-        placeholder="password"
-        className="w-3/4 p-1 m-1 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-        />
-        <div className='flex justify-between w-3/4'>
-          <Checkbox name='aceito' label='Remember me' isChecked={isChecked} onChange={(e) => setIsChecked(e.target.checked)}/>
-          <a href='#' className='text-blue-500 hover:text-blue-700'>Forgot your password?</a>
+    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+          <img
+            alt="Your Company"
+            src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
+            className="mx-auto h-10 w-auto"
+          />
+          <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
+            Sign in to your account
+          </h2>
         </div>
-        <Button text="Sign In"></Button>
-      </form>
-    </div>
+
+        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+          <form onSubmit={handleSubmit(SignIn)} className="space-y-6">
+            <div>
+              <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
+                Email address
+              </label>
+              <div className="mt-2">
+                <input
+                  {...register('email', {
+                    onChange: (e) => setEmail(e.target.value)
+                  })}
+                  value={email}
+                  id='email'
+                  type='email'
+                  placeholder="email"
+                  className="block w-full rounded-md border-indigo-400 border-2 px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-indigo-600 sm:text-sm/6"
+                />
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between">
+                <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
+                  Password
+                </label>
+                <div className="text-sm">
+                  <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
+                    Forgot password?
+                  </a>
+                </div>
+              </div>
+              <div className="mt-2">
+                <input
+                  {...register('password', {
+                    onChange: (e) => setPassword(e.target.value)
+                  })}
+                  value={password}
+                  id='password'
+                  type='password' 
+                  placeholder="password"
+                  className="block w-full rounded-md border-indigo-400 border-2 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2  focus:outline-indigo-600 sm:text-sm/6"
+                />
+              </div>
+            </div>
+            
+            <div className='flex justify-between w-3/4'>
+              <Checkbox name='aceito' label='Remember me' isChecked={isChecked} onChange={(e) => setIsChecked(e.target.checked)}/>
+            </div>
+
+            <div>
+              <button
+                type="submit"
+                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                Sign in
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
   )
 }

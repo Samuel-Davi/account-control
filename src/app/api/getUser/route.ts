@@ -1,25 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import { CookieValueTypes, getCookie } from "cookies-next";
-import { parseCookies } from "nookies";
+import { getCookie } from "cookies-next";
+import { prisma } from "@/app/lib/prisma";
+import { User } from "@/app/models/User";
 
 const SECRET = "chave_super_secreta"; // 🔥 Alterar para variável de ambiente
 
-type User = {
-  id: number;
-  email: string;
-  avatarUrl: string;
-}
 
-//simula bd
-const users = [
-  {
-    id: 1,
-    name: "samuca",
-    email: "samuelchess.2005@gmail.com",
-    avatarUrl: 'https://github.com/Samuel-Davi.png',
-  }
-]
+//get users
+const users = await prisma.users.findMany()
+//console.log(users)
 
 export async function GET(req: NextRequest) {
   try {
@@ -32,7 +22,6 @@ export async function GET(req: NextRequest) {
 
     // Verifica e decodifica o token
     const decoded:any = jwt.verify(token, SECRET);
-    console.log("decoded: ", decoded)
     const user: User | undefined = users.find(u => u.id === decoded.id)
 
     return NextResponse.json({ user });

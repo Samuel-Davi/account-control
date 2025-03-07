@@ -3,15 +3,8 @@
 import { getCookie, setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import { createContext, useEffect, useState } from "react";
-import { api } from "../services/api";
+import { User } from "@/app/models/User";
 
-
-type User = {
-    token: string | null;
-    name: string;
-    email: string;
-    avatarUrl: string;
-}
 
 export type SignInData = {
     email: string;
@@ -37,13 +30,14 @@ export function AuthProvider({ children }: any){
     const [error, setError] = useState(false);
     const router = useRouter()
 
-    const carregaDados = (data:any) => {
+    const carregaDados = (data:User) => {
         //console.log("data: ", data)
         const loadUser:User = {
-            token: null,
+            id: data.id,
+            token: undefined,
             name: data.name,
             email: data.email,
-            avatarUrl: data.avatarUrl,
+            avatarURL: data.avatarURL,
         }
         setUser(loadUser)
         
@@ -58,7 +52,7 @@ export function AuthProvider({ children }: any){
             const token = await getCookie("account-token")
     
             if (token) {
-                fetch("/services/user", {
+                fetch("/api/getUser", {
                     method: "GET",
                     headers: {
                       "Authorization": `Bearer ${token}`,
@@ -75,7 +69,7 @@ export function AuthProvider({ children }: any){
       }, [])
 
     async function signIn({email, password, timeToken} : SignInData){
-        const res = await fetch("/services/auth", {
+        const res = await fetch("/api/auth", {
             method: "POST",
             body: JSON.stringify({ email, password, timeToken }),
             headers: { "Content-Type": "application/json" },
@@ -89,7 +83,8 @@ export function AuthProvider({ children }: any){
         const resUser:User = await res.json()
         setUser(resUser)
 
-        setCookie("account-token", resUser.token, { httpOnly: false, maxAge: 3600 });
+        const maxAge = resUser.timeToken === "1h" ? 3600 : 60*60*24*30;
+        setCookie("account-token", resUser.token, { httpOnly: false, maxAge: maxAge });
 
         //api.defaults.headers['Authorization'] = `Bearer ${resUser.token}`
 

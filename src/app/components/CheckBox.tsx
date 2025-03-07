@@ -15,7 +15,7 @@ interface CheckboxProps {
           onChange={onChange}
           className="w-5 h-5 text-white cursor-pointer rounded-xl"
         />
-        <span className="text-white">{label}</span>
+        <p className="text-sm font-semibold text-indigo-600 hover:text-indigo-500">{label}</p>
       </label>
     );
   }
