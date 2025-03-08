@@ -9,7 +9,8 @@ Este é um sistema simples de controle de conta bancária desenvolvido com **Nex
 - **React**: Biblioteca para a construção da interface de usuário.
 - **Tailwind CSS**: Framework para estilos rápidos e responsivos.
 - **API Routes (Next.js)**: Para criar APIs dentro da mesma aplicação Next.js.
-- **LocalStorage**: Para persistir as transações e saldo da conta (pode ser substituído por um banco de dados real em versões futuras).
+- **Prisma**: ORM para otimizar a relação da api com banco de dados
+- **MySQL**: Banco de dados
 
 ## Funcionalidades (em andamento)
 
@@ -29,7 +30,7 @@ Este é um sistema simples de controle de conta bancária desenvolvido com **Nex
 1. Clone este repositório:
 
    ```bash
-   git clone https://github.com/seu-usuario/controle-conta-bancaria.git
+   git clone https://github.com/Samuel-Davi/account-control.git
    ```
 
 2. Navegue até a pasta do projeto:
