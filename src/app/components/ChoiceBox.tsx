@@ -1,17 +1,16 @@
+'use client'
+
 import { useEffect, useState } from "react";
 import { Categories } from "../models/Categories";
 
 interface ChoiceBoxProps {
     setState: React.Dispatch<React.SetStateAction<number>>;
+    preCategory?: number;
 }
 
-export default function ChoiceBox({ setState }: ChoiceBoxProps) {
+export default function ChoiceBox({ setState, preCategory }: ChoiceBoxProps) {
   const [categories, setCategories] = useState<Categories[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-
-  useEffect(() => {
-    console.log(selectedCategory)
-  }, [selectedCategory])
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(preCategory ? preCategory : null);
 
   // Buscar categorias do backend
   useEffect(() => {

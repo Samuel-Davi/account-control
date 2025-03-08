@@ -39,24 +39,20 @@ const callsToAction = [
 export default function Header(){
 
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-    const { user } = useContext(AuthContext)
+    const { user, saldo } = useContext(AuthContext)
 
-    const [saldo, setSaldo] = useState(0.0)
+    const [ saldoControlado, setSaldoControlado ] = useState(saldo)
 
     useEffect(() => {
-        fetch('/api/calculaSaldo')
-        .then(response => response.json())
-        .then(data => setSaldo(data.saldo))
-        .catch(error => console.error('Error:', error))
-    })
+        console.log("saldo: ", saldo)
+        setSaldoControlado(saldo)
+    }, [saldo])
+    
+
 
     const getColor = () => {
-        return saldo >= 0.0? 14 : 10
+        return saldoControlado >= 0.0 ? 14 : 10
     }
-
-    useEffect(() => {
-        getColor()
-    }, [saldo])
 
     return (
         <header className="bg-white">
@@ -72,7 +68,7 @@ export default function Header(){
                 />
                 </a>
                 <span className='min-w-32 hidden lg:inline'>
-                    Saldo: <Span category_id={getColor()} value={saldo.toString()}></Span> R$
+                    Saldo: <Span category_id={getColor()} value={saldoControlado.toString()}></Span> R$
                 </span>
             </div>
             </div>

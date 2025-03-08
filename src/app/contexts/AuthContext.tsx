@@ -17,6 +17,8 @@ type AuthContextType = {
     user: User | null;
     error: boolean;
     signIn: (data: SignInData) => Promise<void>;
+    saldo: number;
+    setSaldo: (newSaldo: number) => void;
 }
 
 const delay = (amount = 750) => new Promise(resolve => setTimeout(resolve, amount))
@@ -28,9 +30,10 @@ export function AuthProvider({ children }: any){
 
     const [user, setUser] = useState<User | null>(null)
     const [error, setError] = useState(false);
+    const [saldo, setSaldo] = useState(0.0)
     const router = useRouter()
 
-    const carregaDados = (data:User) => {
+    const carregaDados:any = (data:User) => {
         //console.log("data: ", data)
         const loadUser:User = {
             id: data.id,
@@ -40,33 +43,36 @@ export function AuthProvider({ children }: any){
             avatarURL: data.avatarURL,
         }
         setUser(loadUser)
-        
     }
 
     useEffect(() => {
         //console.log("user setado: ", user)
     }, [user])
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const token = await getCookie("account-token")
-    
-            if (token) {
-                fetch("/api/getUser", {
-                    method: "GET",
-                    headers: {
-                      "Authorization": `Bearer ${token}`,
-                      "Content-Type": "application/json"
-                    }
-                  })
-                  .then(response => response.json())
-                  .then(data => carregaDados(data.user))
-                  .catch(error => console.error("Erro:", error));
-            }
-        }
+    const fetchData = async () => {
+        const token = await getCookie("account-token")
 
+        if (token) {
+            await fetch("/api/getUser", {
+                method: "GET",
+                headers: {
+                  "Authorization": `Bearer ${token}`,
+                  "Content-Type": "application/json"
+                }
+              })
+              .then(response => response.json())
+              .then(data => carregaDados(data.user))
+              .catch(error => console.error("Erro:", error));
+        }
+        await fetch('/api/calculaSaldo')
+        .then(response => response.json())
+        .then(data => setSaldo(data.saldo))
+        .catch(error => console.error('Error:', error))
+    }
+    
+    useEffect(() => {
         fetchData()
-      }, [])
+    }, [])
 
     async function signIn({email, password, timeToken} : SignInData){
         const res = await fetch("/api/auth", {
@@ -92,7 +98,7 @@ export function AuthProvider({ children }: any){
     }
 
     return (
-        <AuthContext.Provider value={{ error, user , isAuthenticated, signIn }}>
+        <AuthContext.Provider value={{ setSaldo, error, user , isAuthenticated, signIn, saldo }}>
             {children}
         </AuthContext.Provider>
     )
