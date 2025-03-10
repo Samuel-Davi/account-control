@@ -24,6 +24,8 @@ export default function Transactions(){
     //modal controller
     const [isOpen, setIsOpen] = useState(false)
     const [editIsOpen, setEditIsOpen] = useState(false)
+    const [deleteIsOpen, setDeleteIsOpen] = useState(false)
+    const [transactionId, setTransactionId] = useState(0)
 
     //add form controller
     const {handleSubmit } = useForm();
@@ -32,7 +34,6 @@ export default function Transactions(){
     const [selectedIndex, setSelectedIndex] = useState<number>(0)
 
     //edit form controller
-    const [editTransactionId, setEditTransactionId] = useState(0)
     const [editDate, setEditDate] = useState<string>(format(new Date(), "yyyy-MM-dd'T'HH:mm"))
     const [editCategoryId, setEditCategoryId] = useState<number>(0)
     const [editDescription, setEditDescription] = useState('')
@@ -48,11 +49,6 @@ export default function Transactions(){
         .then(response => response.json())
         .then(data => setCategories(data.categories))
         .catch(error => console.error('Error:', error));
-
-        await fetch('/api/calculaSaldo')
-        .then(response => response.json())
-        .then(data => setSaldo(data.saldo))
-        .catch(error => console.error('Error:', error))
 
     }
 
@@ -80,7 +76,7 @@ export default function Transactions(){
         setEditAmount(Number.parseInt(transaction_amount))
         setEditCategoryId(transaction_categoryId)
         setEditDescription(transaction_desc)
-        setEditTransactionId(transaction_id)
+        setTransactionId(transaction_id)
         setEditDate(format(transaction_date, "yyyy-MM-dd'T'HH:mm"))
         setEditIsOpen(true)
     }
@@ -102,7 +98,7 @@ export default function Transactions(){
                     amount: editAmount,
                     category_id: editCategoryId !== 0 ? editCategoryId : 14,
                     transaction_date: dateObj,
-                    id: editTransactionId
+                    id: transactionId
                 })
             })
             if (response.ok) {
@@ -139,6 +135,18 @@ export default function Transactions(){
             setIsOpen(false)
         }
     }
+    //deletar transação
+    const deleteTransaction = async () => {
+        const response = await fetch(`/api/deleteTransaction?id=${transactionId}`, {
+            method: 'DELETE'
+        })
+        if (response.ok) {
+            fetchs(); // Atualiza os dados sem precisar recarregar a página
+        } else {
+            console.error("Erro ao deletar");
+        }
+        setDeleteIsOpen(false)
+    }
 
     return (
         <div className="flex flex-col items-center">
@@ -172,7 +180,10 @@ export default function Transactions(){
                                 }} className="border-4 border-white bg-blue-400 text-white rounded-xl p-1 hover:bg-blue-600">
                                 <img className="w-6" src={edtImg.src} alt="edit" />
                             </button>
-                            <button className="border-4 border-white bg-red-600 text-white rounded-xl p-1 hover:bg-red-700">
+                            <button onClick={() => {
+                                setTransactionId(transaction.id)
+                                setDeleteIsOpen(true)
+                            }} className="border-4 border-white bg-red-600 text-white rounded-xl p-1 hover:bg-red-700">
                                 <img className="w-6" src={delImg.src} alt="del" />
                             </button>
                         </div>
@@ -299,6 +310,37 @@ export default function Transactions(){
                             </button>
                         </div>
                     </form>
+                </motion.div>
+                </div>
+            )}
+            {/* delete modal */}
+            {deleteIsOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                <motion.div
+                    initial={{ opacity: 0, y: -50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -50 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                    className="bg-white p-6 rounded-lg shadow-lg w-96 h-1/4"
+                >
+                    <h2 className="text-center text-xl font-bold mb-4">Delete Transaction</h2>
+                    
+                    <div className="flex justify-center gap-2 mt-4">
+                            <button
+                            type="button"
+                            onClick={() => setDeleteIsOpen(false)}
+                            className="px-4 py-2 border rounded-md"
+                            >
+                            Cancelar
+                            </button>
+                            <button
+                            onClick={() => deleteTransaction()}
+                            type="button"
+                            className="px-4 py-2 bg-red-600 text-white rounded-md"
+                            >
+                            Deletar
+                            </button>
+                        </div>
                 </motion.div>
                 </div>
             )}

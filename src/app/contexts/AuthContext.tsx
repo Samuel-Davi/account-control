@@ -19,6 +19,7 @@ type AuthContextType = {
     signIn: (data: SignInData) => Promise<void>;
     saldo: number;
     setSaldo: (newSaldo: number) => void;
+    getSaldo: () => Promise<number>;
 }
 
 const delay = (amount = 750) => new Promise(resolve => setTimeout(resolve, amount))
@@ -64,10 +65,20 @@ export function AuthProvider({ children }: any){
               .then(data => carregaDados(data.user))
               .catch(error => console.error("Erro:", error));
         }
+        const res = await getSaldo()
+        setSaldo(res)
+    }
+
+    const getSaldo = async () => {
+
+        let resSaldo = 0
+
         await fetch('/api/calculaSaldo')
         .then(response => response.json())
-        .then(data => setSaldo(data.saldo))
+        .then(data => {resSaldo = data.saldo})
         .catch(error => console.error('Error:', error))
+        
+        return resSaldo
     }
     
     useEffect(() => {
@@ -98,7 +109,7 @@ export function AuthProvider({ children }: any){
     }
 
     return (
-        <AuthContext.Provider value={{ setSaldo, error, user , isAuthenticated, signIn, saldo }}>
+        <AuthContext.Provider value={{ getSaldo, setSaldo, error, user , isAuthenticated, signIn, saldo }}>
             {children}
         </AuthContext.Provider>
     )

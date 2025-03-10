@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+//tailwind
 import {
   Dialog,
   DialogPanel,
@@ -20,9 +20,13 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
+
+//other imports
+import { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '@/app/contexts/AuthContext'
 import Link from 'next/link'
 import Span from './Span'
+import imgReload from '../../../public/assets/images/refresh.png'
 
 const products = [
   { name: 'Analytics', description: 'Get a better understanding of your traffic', href: '#', icon: ChartPieIcon },
@@ -39,38 +43,55 @@ const callsToAction = [
 export default function Header(){
 
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-    const { user, saldo } = useContext(AuthContext)
+    const { user, saldo, getSaldo } = useContext(AuthContext)
 
     const [ saldoControlado, setSaldoControlado ] = useState(saldo)
 
+    const [rotation, setRotation] = useState(0);
+
     useEffect(() => {
-        console.log("saldo: ", saldo)
         setSaldoControlado(saldo)
     }, [saldo])
     
 
+    useEffect(() => {
+        getColor()
+    }, [saldoControlado])
 
     const getColor = () => {
         return saldoControlado >= 0.0 ? 14 : 10
+    }
+
+    const handleClick = async () => {
+        setRotation(rotation + 360)
+        const res = await getSaldo()
+        setSaldoControlado(res)
     }
 
     return (
         <header className="bg-white">
         <nav aria-label="Global" className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
             <div className="flex lg:flex-1 items-start justify-start">
-            <div className="w-3/5 items-center flex justify-between">
-                <a href="#" className="-m-1.5 p-1.5">
-                <span className="sr-only">Your Company</span>
-                <img
-                    alt=""
-                    src={user?.avatarURL}
-                    className="h-8 w-auto min-w-8 rounded-2xl"
-                />
-                </a>
-                <span className='min-w-32 hidden lg:inline'>
-                    Saldo: <Span category_id={getColor()} value={saldoControlado.toString()}></Span> R$
-                </span>
-            </div>
+                <div className="w-3/5 items-center flex justify-between">
+                    <a href="#" className="-m-1.5 p-1.5">
+                    <span className="sr-only">Your Company</span>
+                    <img
+                        alt=""
+                        src={user?.avatarURL}
+                        className="h-8 w-auto min-w-8 rounded-2xl"
+                    />
+                    </a>
+                    <span className='text-center justify-center min-w-32 lg:inline'>
+                        Saldo: <Span category_id={getColor()} value={saldoControlado.toString()}></Span> R$
+                    </span>
+                    <img 
+                    style={{ transform: `rotate(${rotation}deg)` }} 
+                    className='rounded-full transition-transform duration-300 cursor-pointer w-4 ' 
+                    src={imgReload.src} 
+                    alt="reload"
+                    onClick={handleClick}
+                    />
+                </div>
             </div>
             <div className="flex lg:hidden">
             <button
