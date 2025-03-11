@@ -10,16 +10,15 @@ interface DecodedToken {
   id: number;
 }
 
-//get users
-const users = await prisma.users.findMany()
-//console.log(users)
-
 export async function GET(req: NextRequest) {
   try {
     // Obtém o token do cookie
+    
     const token = await getCookie("account-token", { req });//+
 
     //console.log("Token recebido no backend:", token);
+
+    const users = await prisma.users.findMany()
 
     if (!token) throw new Error("Token não encontrado");
 
