@@ -35,7 +35,7 @@ export async function POST(req:Request){
     }
 
     // Gera o token JWT
-    let token = await setToken(user, timeToken)
+    const token = await setToken(user, timeToken)
     
 
     // Salva o token no usuario

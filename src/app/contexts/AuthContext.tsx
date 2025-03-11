@@ -2,7 +2,7 @@
 
 import { getCookie, setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
-import { createContext, useEffect, useState } from "react";
+import { createContext, ReactNode, useEffect, useState } from "react";
 import { User } from "@/app/models/User";
 
 
@@ -11,6 +11,10 @@ export type SignInData = {
     password: string;
     timeToken: string;
 }
+
+interface AuthProviderProps {
+    children: ReactNode;
+  }
 
 type AuthContextType = {
     isAuthenticated: boolean;
@@ -25,7 +29,7 @@ type AuthContextType = {
 const delay = (amount = 750) => new Promise(resolve => setTimeout(resolve, amount))
 
 export const AuthContext = createContext({} as AuthContextType);
-export function AuthProvider({ children }: any){
+export function AuthProvider({ children }: AuthProviderProps){
     const isAuthenticated = false;
 
     const [user, setUser] = useState<User | null>(null)
@@ -33,7 +37,7 @@ export function AuthProvider({ children }: any){
     const [saldo, setSaldo] = useState(0.0)
     const router = useRouter()
 
-    const carregaDados:any = (data:User) => {
+    const carregaDados = (data:User) => {
         //console.log("data: ", data)
         const loadUser:User = {
             id: data.id,

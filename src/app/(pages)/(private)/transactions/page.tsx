@@ -15,7 +15,7 @@ import { format, parse } from "date-fns";
 
 export default function Transactions(){
 
-    const { user, setSaldo } = useContext(AuthContext)
+    const { user } = useContext(AuthContext)
     
     //api data
     const [transactions, setTransactions] = useState<Array<Transaction>>();
