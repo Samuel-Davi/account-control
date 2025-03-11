@@ -59,7 +59,7 @@ export default function Header(){
     }, [saldoControlado])
 
     const getColor = () => {
-        return saldoControlado >= 0.0 ? 14 : 10
+        return saldoControlado >= 0.0 ? 6 : 1
     }
 
     const handleClick = async () => {

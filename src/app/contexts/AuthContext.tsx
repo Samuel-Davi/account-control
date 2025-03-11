@@ -25,7 +25,6 @@ type AuthContextType = {
 const delay = (amount = 750) => new Promise(resolve => setTimeout(resolve, amount))
 
 export const AuthContext = createContext({} as AuthContextType);
-
 export function AuthProvider({ children }: any){
     const isAuthenticated = false;
 
