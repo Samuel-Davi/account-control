@@ -34,9 +34,13 @@ async function calculaGastos(){
 }
 
 export async function GET(){
-    const gastos:number = await calculaGastos()
-    const depositos:number = await calculaDepositos()
-    const saldo:number = depositos-gastos
-
-    return NextResponse.json({ saldo });
+    try {
+        const gastos:number = await calculaGastos()
+        const depositos:number = await calculaDepositos()
+        const saldo:number = depositos-gastos
+        return NextResponse.json({ saldo });
+    } catch (error) {
+        console.error('Erro ao acessar o banco de dados:', error);
+        return NextResponse.json({ error: 'Erro interno do servidor' }, {status: 500});
+    }
 }
