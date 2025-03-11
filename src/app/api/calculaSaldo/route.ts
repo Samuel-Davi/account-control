@@ -35,6 +35,7 @@ async function calculaGastos(){
 
 export async function GET(){
     try {
+        console.log("TA AQUI")
         const gastos:number = await calculaGastos()
         const depositos:number = await calculaDepositos()
         const saldo:number = depositos-gastos
