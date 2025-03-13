@@ -113,7 +113,6 @@ export function AuthProvider({ children }: AuthProviderProps){
         setUser(resUser.user)
 
         const maxAge = resUser.user.timeToken === "1h" ? 3600 : 60*60*24*30;
-        console.log("res user token: ", resUser.user.token)
         setCookie("account_token", resUser.user.token, { httpOnly: false, maxAge: maxAge });
 
         //api.defaults.headers['Authorization'] = `Bearer ${resUser.token}`

@@ -63,7 +63,14 @@ export default function Transactions(){
         .then(data => setTransactions(data.transactions))
         .catch(error => console.error('Error:', error));
 
-        await fetch(`${api}/getCategories`)
+        await fetch(`${api}/getCategories`, {
+            method: "GET",
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json"
+            },
+            credentials: "include"
+        })
         .then(response => response.json())
         .then(data => setCategories(data.categories))
         .catch(error => console.error('Error:', error));
