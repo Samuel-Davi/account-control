@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Categories } from "../models/Categories";
+import { api } from "../lib/api";
 
 interface ChoiceBoxProps {
     setState: React.Dispatch<React.SetStateAction<number>>;
@@ -14,7 +15,7 @@ export default function ChoiceBox({ setState, preCategory }: ChoiceBoxProps) {
 
   // Buscar categorias do backend
   useEffect(() => {
-    fetch("/api/getCategories") // Ajuste a URL do backend
+    fetch(`${api}/getCategories`) // Ajuste a URL do backend
       .then((res) => res.json())
       .then((data) => setCategories(data.categories))
       .catch((err) => console.error("Erro ao buscar categorias:", err));
