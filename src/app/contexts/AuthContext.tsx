@@ -4,6 +4,7 @@ import { getCookie, setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { User } from "@/app/models/User";
+import { api } from "../lib/api";
 
 
 export type SignInData = {
@@ -54,15 +55,16 @@ export function AuthProvider({ children }: AuthProviderProps){
     }, [user])
 
     const fetchData = async () => {
-        const token = await getCookie("account-token")
+        const token = await getCookie("account_token")
 
         if (token) {
-            await fetch("/api/getUser", {
+            await fetch(`${api}/getUser`, {
                 method: "GET",
                 headers: {
                   "Authorization": `Bearer ${token}`,
                   "Content-Type": "application/json"
-                }
+                },
+                credentials: "include"
               })
               .then(response => response.json())
               .then(data => carregaDados(data.user))
@@ -73,10 +75,17 @@ export function AuthProvider({ children }: AuthProviderProps){
     }
 
     const getSaldo = async () => {
-
+        const token = await getCookie("account_token")
         let resSaldo = 0
 
-        await fetch('/api/calculaSaldo')
+        await fetch(`${api}/calculaSaldo`, {
+            method: "GET",
+                headers: {
+                  "Authorization": `Bearer ${token}`,
+                  "Content-Type": "application/json"
+                },
+                credentials: "include"
+        })
         .then(response => response.json())
         .then(data => {resSaldo = data.saldo})
         .catch(error => console.error('Error:', error))
@@ -89,7 +98,7 @@ export function AuthProvider({ children }: AuthProviderProps){
     }, [])
 
     async function signIn({email, password, timeToken} : SignInData){
-        const res = await fetch("/api/auth", {
+        const res = await fetch(`${api}/auth`, {
             method: "POST",
             body: JSON.stringify({ email, password, timeToken }),
             headers: { "Content-Type": "application/json" },
@@ -100,11 +109,12 @@ export function AuthProvider({ children }: AuthProviderProps){
             setError(false)
             return
         }
-        const resUser:User = await res.json()
-        setUser(resUser)
+        const resUser = await res.json()
+        setUser(resUser.user)
 
-        const maxAge = resUser.timeToken === "1h" ? 3600 : 60*60*24*30;
-        setCookie("account-token", resUser.token, { httpOnly: false, maxAge: maxAge });
+        const maxAge = resUser.user.timeToken === "1h" ? 3600 : 60*60*24*30;
+        console.log("res user token: ", resUser.user.token)
+        setCookie("account_token", resUser.user.token, { httpOnly: false, maxAge: maxAge });
 
         //api.defaults.headers['Authorization'] = `Bearer ${resUser.token}`
 

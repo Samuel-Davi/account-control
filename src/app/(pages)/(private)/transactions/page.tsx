@@ -1,17 +1,26 @@
 'use client'
 
-import Span from "@/app/components/Span";
+//modals
 import { Categories } from "@/app/models/Categories";
 import { Transaction } from "@/app/models/Transaction";
-import { useContext, useEffect, useState } from "react";
+
+//layout imports
 import { motion } from 'framer-motion'
+import Span from "@/app/components/Span";
 import addImg from '../../../../../public/assets/images/icons8-add-24.png'
 import delImg from '../../../../../public/assets/images/trash.png'
 import edtImg from '../../../../../public/assets/images/pen.png'
 import ChoiceBox from "@/app/components/ChoiceBox";
+
+//react imports
+import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { AuthContext } from "@/app/contexts/AuthContext";
+
+//other imports
 import { format, parse } from "date-fns";
+import { api } from "@/app/lib/api";
+import { getCookie } from "cookies-next";
 
 export default function Transactions(){
 
@@ -40,12 +49,21 @@ export default function Transactions(){
     const [editAmount, setEditAmount] = useState<number | null>(0.0)
 
     const fetchs = async () => {
-        await fetch('/api/getTransactions')
+        const token = getCookie("account_token")
+        await fetch(`${api}/getTransactions`, {
+            method: "GET",
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json"
+            },
+            credentials: "include"
+  
+        })
         .then(response => response.json())
         .then(data => setTransactions(data.transactions))
         .catch(error => console.error('Error:', error));
 
-        await fetch('/api/getCategories')
+        await fetch(`${api}/getCategories`)
         .then(response => response.json())
         .then(data => setCategories(data.categories))
         .catch(error => console.error('Error:', error));
@@ -87,8 +105,8 @@ export default function Transactions(){
             alert("error")
         }else{
             const dateObj = parse(editDate, "yyyy-MM-dd'T'HH:mm", new Date());
-            console.log(dateObj)
-            const response = await fetch('/api/updateTransaction', {
+            console.log("data: ", dateObj)
+            const response = await fetch(`${api}/updateTransaction`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -98,6 +116,7 @@ export default function Transactions(){
                     amount: editAmount,
                     category_id: editCategoryId !== 0 ? editCategoryId : 14,
                     transaction_date: dateObj,
+                    user_id: user?.id,
                     id: transactionId
                 })
             })
@@ -115,7 +134,7 @@ export default function Transactions(){
         if(!amount || selectedIndex === 0){
             alert("Preencha os dados corretamente!!!")
         }else{
-            const response = await fetch('/api/createTransaction', {
+            const response = await fetch(`${api}/createTransaction`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -137,7 +156,7 @@ export default function Transactions(){
     }
     //deletar transação
     const deleteTransaction = async () => {
-        const response = await fetch(`/api/deleteTransaction?id=${transactionId}`, {
+        const response = await fetch(`${api}/deleteTransaction?id=${transactionId}`, {
             method: 'DELETE'
         })
         if (response.ok) {
