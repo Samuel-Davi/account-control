@@ -178,7 +178,7 @@ export default function Transactions(){
         <div className="flex flex-col items-center">
             <div className="w-4/5 bg-white shadow-md p-4 m-4">
                 <div className="border-b pb-2 mb-2">
-                    <h2 className="text-gray-700 font-medium">Transaction History</h2>
+                    <h2 className="text-gray-700 font-medium">Transaction History - {user?.name}</h2>
 
                 </div>
                 <div className="flex justify-between items-center text-sm py-2">

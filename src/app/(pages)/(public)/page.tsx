@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import Checkbox from '../../components/CheckBox'
 import { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '@/app/contexts/AuthContext'
+import { useRouter } from 'next/navigation'
 
 export default function FirstPage(){
 
@@ -16,8 +17,9 @@ export default function FirstPage(){
   const [isChecked, setIsChecked] = useState(false)
   const [timeToken, setTimeToken] = useState("1h")
 
+  const router = useRouter()
+
   async function SignIn(){
-    console.log(isChecked, timeToken)
     await signIn({email, password, timeToken})
   }
 
@@ -91,8 +93,9 @@ export default function FirstPage(){
               </div>
             </div>
             
-            <div className='flex justify-between w-3/4'>
+            <div className='flex justify-between w-full'>
               <Checkbox name='aceito' label='Remember me' isChecked={isChecked} onChange={(e) => setIsChecked(e.target.checked)}/>
+              <span onClick={() => {router.push('/register')}} className="text-sm font-semibold text-indigo-600 hover:text-indigo-500 cursor-pointer" >Not a user?</span>
             </div>
 
             <div>

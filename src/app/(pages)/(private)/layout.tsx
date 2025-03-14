@@ -11,15 +11,11 @@ export default function RootLayout({
 }>) {
 
   return (
-    <html lang="en" className="h-screen">
-      <body
-        className='antialiased'
-      >
+      <div>
         <Header></Header>
         <AuthProvider>
           {children}
         </AuthProvider>
-      </body>
-    </html>
+      </div>
   );
 }

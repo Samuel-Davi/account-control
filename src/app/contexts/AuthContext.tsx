@@ -6,6 +6,11 @@ import { createContext, ReactNode, useEffect, useState } from "react";
 import { User } from "@/app/models/User";
 import { api } from "../lib/api";
 
+type SignUpData = {
+    name: string;
+    email: string;
+    password: string;
+}
 
 export type SignInData = {
     email: string;
@@ -22,6 +27,7 @@ type AuthContextType = {
     user: User | null;
     error: boolean;
     signIn: (data: SignInData) => Promise<void>;
+    signUp: (data: SignUpData) => Promise<void>;
     saldo: number;
     setSaldo: (newSaldo: number) => void;
     getSaldo: () => Promise<number>;
@@ -70,27 +76,32 @@ export function AuthProvider({ children }: AuthProviderProps){
               .then(data => carregaDados(data.user))
               .catch(error => console.error("Erro:", error));
         }
-        const res = await getSaldo()
-        setSaldo(res)
+        if(user){
+            const res = await getSaldo()
+            setSaldo(res)
+        }
     }
 
     const getSaldo = async () => {
         const token = await getCookie("account_token")
         let resSaldo = 0
 
-        await fetch(`${api}/calculaSaldo`, {
-            method: "GET",
-                headers: {
-                  "Authorization": `Bearer ${token}`,
-                  "Content-Type": "application/json"
-                },
-                credentials: "include"
-        })
-        .then(response => response.json())
-        .then(data => {resSaldo = data.saldo})
-        .catch(error => console.error('Error:', error))
+        try{
+            await fetch(`${api}/calculaSaldo`, {
+                method: "GET",
+                    headers: {
+                      "Authorization": `Bearer ${token}`,
+                      "Content-Type": "application/json"
+                    },
+                    credentials: "include"
+            })
+            .then(response => response.json())
+            .then(data => {resSaldo = data.saldo})
+            return resSaldo
+        }catch(error){
+            throw new Error('Falha ao acessar o saldo')
+        }
         
-        return resSaldo
     }
     
     useEffect(() => {
@@ -117,11 +128,33 @@ export function AuthProvider({ children }: AuthProviderProps){
 
         //api.defaults.headers['Authorization'] = `Bearer ${resUser.token}`
 
-        router.push('/dashboard')
+        router.push('/transactions')
+    }
+
+    async function signUp({name, email, password }: SignUpData){
+        const res = await fetch(`${api}/signup`, {
+            method: "POST",
+            body: JSON.stringify({ name, email, password }),
+            headers: { "Content-Type": "application/json" },
+          });
+        if (!res.ok){
+            setError(true)
+            await delay()
+            setError(false)
+            return
+        }
+        const resUser = await res.json()
+        setUser(resUser.user)
+
+        //api.defaults.headers['Authorization'] = `Bearer ${resUser.token}`
+
+        alert("Usuário criado com sucesso!");
+
+        router.push('/')
     }
 
     return (
-        <AuthContext.Provider value={{ getSaldo, setSaldo, error, user , isAuthenticated, signIn, saldo }}>
+        <AuthContext.Provider value={{ signUp, getSaldo, setSaldo, error, user , isAuthenticated, signIn, saldo }}>
             {children}
         </AuthContext.Provider>
     )

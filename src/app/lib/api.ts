@@ -1,1 +1,1 @@
-export const api = "https://account-control-backend.onrender.com"
+export const api = "http://localhost:8080"
