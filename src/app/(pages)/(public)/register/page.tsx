@@ -1,7 +1,7 @@
 'use client'
 
 import { AuthContext } from "@/app/contexts/AuthContext";
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useForm } from "react-hook-form";
 
 export default function SignIn(){
@@ -17,6 +17,15 @@ export default function SignIn(){
   async function SignUp(){
     await signUp({name, email, password})
   }
+
+  useEffect(() => {
+      if (error){
+        alert("Usuário com esse email ja existente!!!")
+        setName("")
+        setEmail("")
+        setPassword("")
+      } 
+    }, [error])
 
     return (
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">

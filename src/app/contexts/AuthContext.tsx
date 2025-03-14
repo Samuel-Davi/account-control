@@ -99,9 +99,9 @@ export function AuthProvider({ children }: AuthProviderProps){
             .then(data => {resSaldo = data.saldo})
             return resSaldo
         }catch(error){
-            throw new Error('Falha ao acessar o saldo')
+            console.error("erro ao carregar o saldo:", error)
+            return 0.0
         }
-        
     }
     
     useEffect(() => {
