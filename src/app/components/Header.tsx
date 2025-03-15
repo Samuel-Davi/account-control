@@ -48,8 +48,13 @@ export default function Header(){
     const [uploadModal, setUploadModal] = useState(false)
 
     useEffect(() => {
-        setSaldoControlado(saldo)
+        effectSaldo()
     }, [])
+
+    const effectSaldo = async () => {
+        const res = await getSaldo()
+        setSaldoControlado(res)
+    }
     
     useEffect(() => {
         setSaldoControlado(saldo)

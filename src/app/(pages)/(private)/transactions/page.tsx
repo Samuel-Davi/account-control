@@ -75,6 +75,8 @@ export default function Transactions(){
         .then(data => setCategories(data.categories))
         .catch(error => console.error('Error:', error));
 
+        
+
     }
 
     useEffect(() => {
