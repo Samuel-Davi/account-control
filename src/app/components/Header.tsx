@@ -89,29 +89,32 @@ export default function Header(){
 
         // Enviar a foto para a API diretamente após a seleção
         if (selectedFile) {
-        const formData = new FormData();
-        formData.append("file", selectedFile);
-
-        // Chama a API para enviar a imagem
-
-        const token = getCookie("account_token")
-
-        fetch(`${api}/upload`, {
-            method: "POST",
-            body: formData,
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        })
-            .then((response) => response.json())
-            .then((data) => {
-            console.log("Sucesso:", data);
-            alert("Foto enviada com sucesso!");
-            })
-            .catch((error) => {
-            console.error("Erro:", error);
-            alert("Erro ao enviar a foto.");
+            const formData = new FormData();
+            formData.append("image", selectedFile);
+            formData.append("key", "3101a1a3c1d7f0847eac2c188da16398");
+            
+            const res = await fetch("https://api.imgbb.com/1/upload", {
+                method: "POST",
+                body: formData,
             });
+            
+            const data = await res.json();
+            const url = data.data.image.url
+            const deleteUrl = data.data.delete_url
+            console.log(url); // URL da imagem
+            const userId = user?.id
+
+            await fetch(`${api}/upload`, {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${getCookie('account_token')}`,
+                },
+                body: JSON.stringify({ userId, url }),
+            });
+
+
+              
         }
         setUploadModal(false)
     }
