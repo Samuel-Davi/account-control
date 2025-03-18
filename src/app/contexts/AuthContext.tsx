@@ -137,7 +137,7 @@ export function AuthProvider({ children }: AuthProviderProps){
     
             router.push('/transactions')
         }catch(err){
-            //console.warn("Erro de rede", err)
+            console.warn("Erro de rede", err)
         }
     }
 
@@ -163,7 +163,7 @@ export function AuthProvider({ children }: AuthProviderProps){
     
             router.push('/')
         }catch(err){
-            //console.warn("erro de rede", err)
+            console.warn("erro de rede", err)
         }
     }
 

@@ -45,8 +45,6 @@ export default function Header(){
 
     const [logOutModal, setLogOutModal] = useState(false)
     const [loading, setLoading] = useState(false)
-
-    const [file, setFile] = useState<File | null>(null)
     const [uploadModal, setUploadModal] = useState(false)
 
     useEffect(() => {
@@ -83,7 +81,6 @@ export default function Header(){
         //console.log("uploading image...")
 
         const selectedFile = event.target.files ?  event.target.files[0] : null;
-        setFile(selectedFile);
 
         // Enviar a foto para a API diretamente após a seleção
         if (selectedFile) {
