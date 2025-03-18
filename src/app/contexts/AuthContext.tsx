@@ -31,6 +31,8 @@ type AuthContextType = {
     saldo: number;
     setSaldo: (newSaldo: number) => void;
     getSaldo: () => Promise<number>;
+    success: boolean;
+    setSuccess: (newSucess: boolean) => void;
 }
 
 const delay = (amount = 750) => new Promise(resolve => setTimeout(resolve, amount))
@@ -41,6 +43,7 @@ export function AuthProvider({ children }: AuthProviderProps){
 
     const [user, setUser] = useState<User | null>(null)
     const [error, setError] = useState(false);
+    const [success, setSuccess] = useState(false)
     const [saldo, setSaldo] = useState(0.0)
     const router = useRouter()
 
@@ -52,6 +55,8 @@ export function AuthProvider({ children }: AuthProviderProps){
             name: data.name,
             email: data.email,
             avatarURL: data.avatarURL,
+            deleteURL: data.deleteURL,
+            timeToken: undefined,
         }
         setUser(loadUser)
     }
@@ -109,52 +114,61 @@ export function AuthProvider({ children }: AuthProviderProps){
     }, [])
 
     async function signIn({email, password, timeToken} : SignInData){
-        const res = await fetch(`${api}/auth`, {
-            method: "POST",
-            body: JSON.stringify({ email, password, timeToken }),
-            headers: { "Content-Type": "application/json" },
-          });
-        if (!res.ok){
-            setError(true)
-            await delay()
-            setError(false)
-            return
+        try{
+            const res = await fetch(`${api}/auth`, {
+                method: "POST",
+                body: JSON.stringify({ email, password, timeToken }),
+                headers: { "Content-Type": "application/json" },
+            });
+            if (!res.ok){
+                setError(true)
+                await delay()
+                setError(false)
+                return 
+            }
+            const resUser = await res.json()
+            setUser(resUser.user)
+    
+            const maxAge = resUser.user.timeToken === "1h" ? 3600 : 60*60*24*30;
+            setCookie("account_token", resUser.user.token, { httpOnly: false, maxAge: maxAge });
+    
+            //api.defaults.headers['Authorization'] = `Bearer ${resUser.token}`
+            setSuccess(true)
+    
+            router.push('/transactions')
+        }catch(err){
+            //console.warn("Erro de rede", err)
         }
-        const resUser = await res.json()
-        setUser(resUser.user)
-
-        const maxAge = resUser.user.timeToken === "1h" ? 3600 : 60*60*24*30;
-        setCookie("account_token", resUser.user.token, { httpOnly: false, maxAge: maxAge });
-
-        //api.defaults.headers['Authorization'] = `Bearer ${resUser.token}`
-
-        router.push('/transactions')
     }
 
     async function signUp({name, email, password }: SignUpData){
-        const res = await fetch(`${api}/signup`, {
-            method: "POST",
-            body: JSON.stringify({ name, email, password }),
-            headers: { "Content-Type": "application/json" },
-          });
-        if (!res.ok){
-            setError(true)
-            await delay()
-            setError(false)
-            return
+        try{
+            const res = await fetch(`${api}/signup`, {
+                method: "POST",
+                body: JSON.stringify({ name, email, password }),
+                headers: { "Content-Type": "application/json" },
+              });
+            if (!res.ok){
+                setError(true)
+                await delay()
+                setError(false)
+                return
+            }
+            const resUser = await res.json()
+            setUser(resUser.user)
+    
+            //api.defaults.headers['Authorization'] = `Bearer ${resUser.token}`
+    
+            setSuccess(true)
+    
+            router.push('/')
+        }catch(err){
+            //console.warn("erro de rede", err)
         }
-        const resUser = await res.json()
-        setUser(resUser.user)
-
-        //api.defaults.headers['Authorization'] = `Bearer ${resUser.token}`
-
-        alert("Usuário criado com sucesso!");
-
-        router.push('/')
     }
 
     return (
-        <AuthContext.Provider value={{ signUp, getSaldo, setSaldo, error, user , isAuthenticated, signIn, saldo }}>
+        <AuthContext.Provider value={{setSuccess, success, signUp, getSaldo, setSaldo, error, user , isAuthenticated, signIn, saldo }}>
             {children}
         </AuthContext.Provider>
     )

@@ -3,23 +3,30 @@
 import { AuthContext } from "@/app/contexts/AuthContext";
 import { useContext, useEffect, useState } from "react"
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import Loading from "@/app/components/Loading";
 
-export default function SignIn(){
+export default function SignUp(){
 
   const { register, handleSubmit } = useForm();
 
-  const { error , signUp } = useContext(AuthContext)
+  const {setSuccess, success,  error , signUp } = useContext(AuthContext)
 
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [loading, setLoading] = useState(false)
+
+  const router = useRouter()
 
   async function SignUp(){
+    setLoading(true)
     await signUp({name, email, password})
   }
 
   useEffect(() => {
       if (error){
+        setLoading(false)
         alert("Usuário com esse email ja existente!!!")
         setName("")
         setEmail("")
@@ -27,8 +34,21 @@ export default function SignIn(){
       } 
     }, [error])
 
+    useEffect(() => {
+      if(success) {
+        setLoading(false)
+        alert("Usuário cadastrado com sucesso!!!")
+        setSuccess(false)
+      }
+    }, [success])
+
     return (
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+              <div className="fixed top-4 left-4">
+                <button onClick={() => router.push('/') } className="flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" 
+                  >Voltar
+                  </button>
+              </div>
               <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                 <img
                   alt="Your Company"
@@ -107,6 +127,9 @@ export default function SignIn(){
                   </div>
                 </form>
               </div>
+              {loading && (
+                  <Loading/>
+              )}
             </div>
     )
   }

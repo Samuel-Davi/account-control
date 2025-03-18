@@ -15,10 +15,11 @@ import { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '@/app/contexts/AuthContext'
 import Link from 'next/link'
 import Span from './Span'
-import imgReload from '../../../public/assets/images/refresh.png'
+import imgReload from '../../../public/assets/images/money.png'
 import userIcon from '../../../public/assets/images/user.png'
 import { api } from '../lib/api'
 import { getCookie } from 'cookies-next'
+import Loading from './Loading'
 
 /*const products = [
   { name: 'Analytics', description: 'Get a better understanding of your traffic', href: '#', icon: ChartPieIcon },
@@ -43,6 +44,7 @@ export default function Header(){
     const [rotation, setRotation] = useState(0);
 
     const [logOutModal, setLogOutModal] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     const [file, setFile] = useState<File | null>(null)
     const [uploadModal, setUploadModal] = useState(false)
@@ -76,13 +78,9 @@ export default function Header(){
         setSaldoControlado(res)
     }
 
-    useEffect(() => {
-        console.log(file)
-    }, [file])
-
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
 
-        console.log("uploading image...")
+        //console.log("uploading image...")
 
         const selectedFile = event.target.files ?  event.target.files[0] : null;
         setFile(selectedFile);
@@ -92,6 +90,8 @@ export default function Header(){
             const formData = new FormData();
             formData.append("image", selectedFile);
             formData.append("key", "3101a1a3c1d7f0847eac2c188da16398");
+
+            setLoading(true)
             
             const res = await fetch("https://api.imgbb.com/1/upload", {
                 method: "POST",
@@ -100,9 +100,12 @@ export default function Header(){
             
             const data = await res.json();
             const url = data.data.image.url
-            const deleteUrl = data.data.delete_url
-            console.log(url); // URL da imagem
+            const deleteURL = data.data.delete_url
+            //console.log("deleteUrl pego", deleteURL); // URL da imagem
+            //console.log("deleteUrl anterior", user?.deleteURL)
             const userId = user?.id
+
+            await fetch(user?.deleteURL ? user.deleteURL : "", { mode: "no-cors" })
 
             await fetch(`${api}/upload`, {
                 method: "POST",
@@ -110,12 +113,29 @@ export default function Header(){
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${getCookie('account_token')}`,
                 },
-                body: JSON.stringify({ userId, url }),
+                body: JSON.stringify({ deleteURL, userId, url }),
             });
 
-
-              
+            await fetch(`${api}/getUser`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${getCookie('account_token')}`,
+                    "Content-Type": "application/json"
+                },
+                credentials: "include"
+            })
+            .then(response => response.json())
+            .then(data => {
+                //console.log("data: ", data)
+                if(user){
+                    user.avatarURL = data.user.avatarURL
+                    user.deleteURL = data.user.deleteURL
+                }
+            })
+            .catch(error => console.error("Erro:", error));
+            
         }
+        setLoading(false)
         setUploadModal(false)
     }
 
@@ -147,7 +167,7 @@ export default function Header(){
                             </span>
                             <img 
                             style={{ transform: `rotate(${rotation}deg)` }} 
-                            className='rounded-full transition-transform duration-300 cursor-pointer w-4 ' 
+                            className='rounded-full transition-transform duration-300 cursor-pointer w-6 ' 
                             src={imgReload.src} 
                             alt="reload"
                             onClick={handleClick}
@@ -281,7 +301,10 @@ export default function Header(){
                         </div>
                         <div className="py-6">
                             <a
-                            onClick={() => setLogOutModal(true)}
+                            onClick={() => {
+                                setMobileMenuOpen(false)
+                                setLogOutModal(true);
+                            }}
                             className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 cursor-pointer font-semibold text-gray-900 hover:bg-gray-50"
                             >
                             Log out
@@ -335,6 +358,9 @@ export default function Header(){
                     </form> 
                 </motion.div>
                 </div>
+            )}
+            {loading && (
+                <Loading/>
             )}
         </div>
     );

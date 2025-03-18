@@ -100,7 +100,7 @@ export default function Transactions(){
         transaction_amount:string,
         transaction_date: Date
     ) => {
-        setEditAmount(Number.parseInt(transaction_amount))
+        setEditAmount(parseFloat(transaction_amount))
         setEditCategoryId(transaction_categoryId)
         setEditDescription(transaction_desc)
         setTransactionId(transaction_id)
@@ -154,8 +154,10 @@ export default function Transactions(){
                     category_id: selectedIndex !== 0 ? selectedIndex : 14,
                     user_id: user?.id
                 })
-            }) 
+            })
             if (response.ok) {
+                setAmount(0.0)
+                setDescription("")
                 fetchs(); // Atualiza os dados sem precisar recarregar a página
               } else {
                 console.error("Erro ao atualizar");
@@ -177,8 +179,8 @@ export default function Transactions(){
     }
 
     return (
-        <div className="flex flex-col items-center">
-            <div className="w-4/5 bg-white shadow-md p-4 m-4">
+        <div className="flex h-4/5 flex-col items-center">
+            <div className="h-5/6 w-4/5 bg-white shadow-md p-4 m-4">
                 <div className="border-b pb-2 mb-2">
                     <h2 className="text-gray-700 font-medium">Transaction History - {user?.name}</h2>
 
@@ -186,39 +188,41 @@ export default function Transactions(){
                 <div className="flex justify-between items-center text-sm py-2">
                     <span className="w-36 text-center">Date</span>
                     <span className="w-36 text-center">Description</span>
-                    <span className="w-36 text-center">Category</span>
+                    <span className="hidden sm:block w-36 text-center">Category</span>
                     <span className="w-36 text-center">Amount</span>
                     <span className="w-36 text-center">Options</span>
                 </div>
-                {transactions?.map(transaction => (
-                    <div key={transaction.id} className="flex justify-between items-center text-sm py-2">
-                        <span className="w-36 text-center">{new Date(transaction.transaction_date).toLocaleString("pt-BR")}</span>
-                        <span className="w-36 text-center">{transaction.description}</span>
-                        <span className="w-36 text-center">{getCategory(transaction.category_id)}</span>
-                        <span className="w-36 text-center"><Span category_id={transaction.category_id} value={transaction.amount.toString() + "R$"}></Span></span>
-                        <div className="w-36 text-center">
-                            <button onClick={() => {
-                                    editTransaction(
-                                        transaction.id,
-                                        transaction.description, 
-                                        transaction.category_id, 
-                                        transaction.amount.toString(),
-                                        new Date(transaction.transaction_date)
-                                    )
-                                }} className="border-4 border-white bg-blue-400 text-white rounded-xl p-1 hover:bg-blue-600">
-                                <img className="w-6" src={edtImg.src} alt="edit" />
-                            </button>
-                            <button onClick={() => {
-                                setTransactionId(transaction.id)
-                                setDeleteIsOpen(true)
-                            }} className="border-4 border-white bg-red-600 text-white rounded-xl p-1 hover:bg-red-700">
-                                <img className="w-6" src={delImg.src} alt="del" />
-                            </button>
+                <div className="h-5/6 overflow-auto">
+                    {transactions?.map(transaction => (
+                        <div key={transaction.id} className="flex justify-between items-center text-sm py-2">
+                            <span className="w-36 text-center">{new Date(transaction.transaction_date).toLocaleString("pt-BR")}</span>
+                            <span className="w-36 text-center">{transaction.description}</span>
+                            <span className="hidden sm:block w-36 text-center">{getCategory(transaction.category_id)}</span>
+                            <span className="w-36 text-center"><Span category_id={transaction.category_id} value={transaction.amount.toString() + "R$"}></Span></span>
+                            <div className="w-36 text-center">
+                                <button onClick={() => {
+                                        editTransaction(
+                                            transaction.id,
+                                            transaction.description, 
+                                            transaction.category_id, 
+                                            transaction.amount.toString(),
+                                            new Date(transaction.transaction_date)
+                                        )
+                                    }} className="border-4 border-white bg-blue-400 text-white rounded-xl p-1 hover:bg-blue-600">
+                                    <img className="w-6" src={edtImg.src} alt="edit" />
+                                </button>
+                                <button onClick={() => {
+                                    setTransactionId(transaction.id)
+                                    setDeleteIsOpen(true)
+                                }} className="border-4 border-white bg-red-600 text-white rounded-xl p-1 hover:bg-red-700">
+                                    <img className="w-6" src={delImg.src} alt="del" />
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
-            <button onClick={addTransaction} className="rounded-md bg-purple-800 p-1 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow-lg focus:bg-purple-700 focus:shadow-none active:bg-purple-700 hover:bg-purple-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" type="button">
+            <button onClick={addTransaction} className="fixed bottom-8 rounded-md bg-purple-800 p-1 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow-lg focus:bg-purple-700 focus:shadow-none active:bg-purple-700 hover:bg-purple-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" type="button">
                 <img src={addImg.src} alt="img" />
             </button>
             {/* add modal */}

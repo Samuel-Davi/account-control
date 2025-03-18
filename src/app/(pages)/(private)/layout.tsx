@@ -11,7 +11,7 @@ export default function RootLayout({
 }>) {
 
   return (
-      <div>
+      <div className="h-screen">
         <Header></Header>
         <AuthProvider>
           {children}

@@ -5,21 +5,24 @@ import Checkbox from '../../components/CheckBox'
 import { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '@/app/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
+import Loading from '@/app/components/Loading'
 
 export default function FirstPage(){
 
   const { register, handleSubmit } = useForm();
 
-  const { error, signIn } = useContext(AuthContext);
+  const {success, setSuccess, error, signIn } = useContext(AuthContext);
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isChecked, setIsChecked] = useState(false)
   const [timeToken, setTimeToken] = useState("1h")
+  const [loading, setLoading] = useState(false)
 
   const router = useRouter()
 
   async function SignIn(){
+    setLoading(true)
     await signIn({email, password, timeToken})
   }
 
@@ -30,10 +33,18 @@ export default function FirstPage(){
   useEffect(() => {
     if (error){
       alert("incorrect email or password!!!")
+      setLoading(false)
       setEmail("")
       setPassword("")
     } 
   }, [error])
+
+  useEffect(() => {
+    if(success) {
+      setLoading(false)
+      setSuccess(false)
+    }
+  }, [success])
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -73,11 +84,13 @@ export default function FirstPage(){
                 <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
                   Password
                 </label>
-                <div className="text-sm">
-                  <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
+                {/*<div className="text-sm">
+                  <a onClick={() => {
+                    alert("")
+                  }} className="font-semibold text-indigo-600 hover:text-indigo-500">
                     Forgot password?
                   </a>
-                </div>
+                </div>*/}
               </div>
               <div className="mt-2">
                 <input
@@ -108,6 +121,9 @@ export default function FirstPage(){
             </div>
           </form>
         </div>
+        {loading && (
+          <Loading/>
+        )}
       </div>
   )
 }
