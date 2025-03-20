@@ -21,6 +21,7 @@ import { AuthContext } from "@/app/contexts/AuthContext";
 import { format, parse } from "date-fns";
 import { api } from "@/app/lib/api";
 import { getCookie } from "cookies-next";
+import Loading from "@/app/components/Loading";
 
 export default function Transactions(){
 
@@ -41,6 +42,8 @@ export default function Transactions(){
     const [description, setDescription] = useState('')
     const [amount, setAmount] = useState<number | null> (0.0)
     const [selectedIndex, setSelectedIndex] = useState<number>(0)
+    const [loading, setLoading] = useState(false)
+    const [categoryType, setCategoryType] = useState(false)
 
     //edit form controller
     const [editDate, setEditDate] = useState<string>(format(new Date(), "yyyy-MM-dd'T'HH:mm"))
@@ -140,7 +143,9 @@ export default function Transactions(){
 
     //criar transação
     const createTransaction = async () => {
+        setLoading(true)
         if(!amount || selectedIndex === 0){
+            setLoading(false)
             alert("Preencha os dados corretamente!!!")
         }else{
             const response = await fetch(`${api}/createTransaction`, {
@@ -162,6 +167,7 @@ export default function Transactions(){
               } else {
                 console.error("Erro ao atualizar");
               }
+            setLoading(false)
             setIsOpen(false)
         }
     }
@@ -247,8 +253,31 @@ export default function Transactions(){
                             onChange={(e) => {setAmount(e.target.valueAsNumber)}}
                             />
                         </label>
+                        <label className="block font-medium">Escolha uma categoria:</label>
 
-                        <ChoiceBox setState={setSelectedIndex}/>                 
+                        <div className="flex w-4/5 justify-around">
+                            <div className="flex w-1/3 justify-around">
+                                <input 
+                                checked={!categoryType} 
+                                type="radio" 
+                                name="gastos" 
+                                id="gastos" 
+                                onChange={() => setCategoryType(prev => !prev)}/>
+                                <p>Gastos</p>
+                            </div>
+
+                            <div className="flex w-1/3 justify-around">
+                                <input 
+                                checked={categoryType}
+                                onChange={() => setCategoryType(prev => !prev)}
+                                type="radio" 
+                                name="ganhos" 
+                                id="ganhos" />
+                                <p>Ganhos</p> 
+                            </div>
+                        </div>
+
+                        <ChoiceBox preCategoryType={categoryType === false ? 0 : 1} setState={setSelectedIndex}/>                 
 
                         <label className="w-4/5 block">
                             Descrição:
@@ -303,7 +332,7 @@ export default function Transactions(){
                             />
                         </label>
 
-                        <ChoiceBox preCategory={editCategoryId} setState={setEditCategoryId}/>                 
+                        <ChoiceBox preCategory={editCategoryId} preCategoryType={editCategoryId === 6 ? 1 : 0} setState={setEditCategoryId}/>                 
 
                         <label className="w-4/5 block">
                             Descrição:
@@ -376,6 +405,7 @@ export default function Transactions(){
                 </motion.div>
                 </div>
             )}
+            {loading && (<Loading/>)}
         </div>
     );
 }
