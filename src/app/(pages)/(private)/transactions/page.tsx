@@ -52,6 +52,7 @@ export default function Transactions(){
     const [editAmount, setEditAmount] = useState<number | null>(0.0)
 
     const fetchs = async () => {
+        setLoading(true)
         const token = getCookie("account_token")
         await fetch(`${api}/getTransactions`, {
             method: "GET",
@@ -79,7 +80,7 @@ export default function Transactions(){
         .catch(error => console.error('Error:', error));
 
         
-
+        setLoading(false)
     }
 
     useEffect(() => {
