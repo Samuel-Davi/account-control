@@ -115,7 +115,7 @@ export default function Transactions(){
     //editar transação
     const updateTransaction = async () => {
         if(!editAmount || !editDescription || !editCategoryId || !editDate){
-            alert("error")
+            alert("Preencha os dados corretamente")
         }else{
             const dateObj = parse(editDate, "yyyy-MM-dd'T'HH:mm", new Date());
             console.log("data: ", dateObj)
@@ -145,7 +145,7 @@ export default function Transactions(){
     //criar transação
     const createTransaction = async () => {
         setLoading(true)
-        if(!amount || selectedIndex === 0){
+        if(!amount || selectedIndex === 0 || description === ""){
             setLoading(false)
             alert("Preencha os dados corretamente!!!")
         }else{
