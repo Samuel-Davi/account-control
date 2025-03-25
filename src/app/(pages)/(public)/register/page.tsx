@@ -15,13 +15,15 @@ export default function SignUp(){
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [code, setCode] = useState("")
   const [loading, setLoading] = useState(false)
 
   const router = useRouter()
 
   async function SignUp(){
     setLoading(true)
-    await signUp({name, email, password})
+    if(code === "viscacatalunha") await signUp({name, email, password})
+      else alert("invalid code"); setLoading(false)
   }
 
   useEffect(() => {
@@ -43,7 +45,7 @@ export default function SignUp(){
     }, [success])
 
     return (
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      <div className="flex min-h-full flex-1 flex-col items-center justify-center px-6 py-12 lg:px-8">
               <div className="fixed top-4 left-4">
                 <button onClick={() => router.push('/') } className="flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" 
                   >Voltar
@@ -60,13 +62,13 @@ export default function SignUp(){
                 </h2>
               </div>
       
-              <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+              <div className="mt-10 w-4/5 sm:w-full sm:max-w-md">
                 <form onSubmit={handleSubmit(SignUp)} className="space-y-6">
-                <div>
+                <div className="flex items-center justify-between">
                     <label htmlFor="name" className="block text-sm/6 font-medium text-gray-900">
-                      Name
+                      Name:
                     </label>
-                    <div className="mt-2">
+                    <div className="mt-2 w-3/4">
                       <input
                         {...register('name', {
                           onChange: (e) => setName(e.target.value)
@@ -79,11 +81,11 @@ export default function SignUp(){
                       />
                     </div>
                   </div>
-                  <div>
+                  <div className="flex items-center justify-between">
                     <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
-                      Email address
+                      Email:
                     </label>
-                    <div className="mt-2">
+                    <div className="mt-2 w-3/4">
                       <input
                         {...register('email', {
                           onChange: (e) => setEmail(e.target.value)
@@ -97,13 +99,13 @@ export default function SignUp(){
                     </div>
                   </div>
       
-                  <div>
+                  <div className="flex justify-between">
                     <div className="flex items-center justify-between">
                       <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
-                        Password
+                        Password:
                       </label>
                     </div>
-                    <div className="mt-2">
+                    <div className="mt-2 w-3/4">
                       <input
                         {...register('password', {
                           onChange: (e) => setPassword(e.target.value)
@@ -112,6 +114,26 @@ export default function SignUp(){
                         id='password'
                         type='password' 
                         placeholder="password"
+                        className="block w-full rounded-md border-indigo-400 border-2 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2  focus:outline-indigo-600 sm:text-sm/6"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
+                        Code:
+                      </label>
+                    </div>
+                    <div className="mt-2 w-3/4">
+                      <input
+                        {...register('code', {
+                          onChange: (e) => setCode(e.target.value)
+                        })}
+                        value={code}
+                        id='code'
+                        type='code' 
+                        placeholder="code"
                         className="block w-full rounded-md border-indigo-400 border-2 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2  focus:outline-indigo-600 sm:text-sm/6"
                       />
                     </div>
