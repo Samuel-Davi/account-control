@@ -146,9 +146,9 @@ export default function Header(){
     return (
         <div>
             <header className="bg-white">
-                <nav aria-label="Global" className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
-                    <div className="flex lg:flex-1 items-start justify-start">
-                        <div className="w-3/5 items-center flex justify-between">
+                <nav aria-label="Global" className="mx-auto  flex w-full items-center justify-between p-6 lg:px-8">
+                    <div className="w-2/5 lg:w-1/5 flex items-start justify-start">
+                        <div className="w-full items-center flex justify-between">
 
                             <a  className="-m-1.5 p-1.5">
                             <span className="sr-only">Your </span>
@@ -159,8 +159,8 @@ export default function Header(){
                                 className="cursor-pointer h-8 w-auto min-w-8 rounded-2xl"
                             />
                             </a>
-                            <span className='text-center justify-center min-w-32 lg:inline'>
-                                Saldo: <Span category_id={getColor()} value={saldoControlado ? saldoControlado.toString() : "0.0"}></Span> R$
+                            <span className='text-center ml-2 mr-1 justify-center min-w-32 lg:inline'>
+                                Saldo: <Span category_id={getColor()} value={saldoControlado ? Number(saldoControlado.toFixed(2)).toString() : "0.0"}></Span> R$
                             </span>
                             <img 
                             style={{ transform: `rotate(${rotation}deg)` }} 
@@ -233,7 +233,7 @@ export default function Header(){
                         Dashboard
                     </Link>
                     </PopoverGroup>
-                    <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+                    <div className="hidden lg:flex">
                     <a onClick={() => setLogOutModal(true)} className="text-sm/6 font-semibold cursor-pointer text-gray-900">
                         Log out <span aria-hidden="true">&rarr;</span>
                     </a>

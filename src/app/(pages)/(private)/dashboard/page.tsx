@@ -1,5 +1,6 @@
 'use client'
 
+import Chart from "@/app/components/Chart"
 import Loading from "@/app/components/Loading"
 import { AuthContext } from "@/app/contexts/AuthContext"
 import { useContext, useEffect, useState } from "react"
@@ -20,8 +21,13 @@ export default function Dashboard() {
   }, [user])
 
   return (
-    <div className="flex justify-center items-center">
+    <div className="flex h-full flex-col justify-around items-center">
       <h1 className="text-2xl">Bem vindo(a) {user?.name}</h1>
+
+      <div className="h-3/4">
+        <Chart/>
+      </div>
+
       {loading && (<Loading/>)} 
     </div>
   )
