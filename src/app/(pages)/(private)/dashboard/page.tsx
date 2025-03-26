@@ -13,18 +13,11 @@ export default function Dashboard() {
   useEffect(() => {
     if(!user) setLoading(true)
     else setLoading(false)  
-  }, [])
-
-  useEffect(() => {
-    if(!user) setLoading(true)
-    else setLoading(false)  
   }, [user])
 
   return (
-    <div className="flex h-full flex-col justify-around items-center">
-      <h1 className="text-2xl">Bem vindo(a) {user?.name}</h1>
-
-      <div className="h-3/4">
+    <div className="flex h-full flex-col justify-center items-center">
+      <div className="h-full flex flex-col justify-start items-center">
         <Chart/>
       </div>
 

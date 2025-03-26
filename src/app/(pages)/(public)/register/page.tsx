@@ -42,7 +42,7 @@ export default function SignUp(){
         alert("Usuário cadastrado com sucesso!!!")
         setSuccess(false)
       }
-    }, [success])
+    }, [success, setSuccess])
 
     return (
       <div className="flex min-h-full flex-1 flex-col items-center justify-center px-6 py-12 lg:px-8">
