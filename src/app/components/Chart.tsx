@@ -18,15 +18,7 @@ type DataType = {
 
 export default function PieArcLabel() {
 
-  const valueFormatter = (item: { value: number }) => `${item.value} R$`;
-
-    const fixedData: userDataSchema[] = [
-        { label: "Alimentos", value: 50 },
-        { label: "Saúde", value: 25 },
-        { label: "Transporte", value: 50 },
-        { label: "Lazer", value: 25 },
-    ]
-
+    const valueFormatter = (item: { value: number }) => `${item.value} R$`;
     const [saveData, setSaveData] = useState<Array<Transaction>>()
     const [data, setData] = useState<DataType>()
     const [total, setTotal] = useState(1)
