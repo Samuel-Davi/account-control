@@ -135,7 +135,7 @@ export function AuthProvider({ children }: AuthProviderProps){
             //api.defaults.headers['Authorization'] = `Bearer ${resUser.token}`
             setSuccess(true)
     
-            router.push('/transactions')
+            router.push('/dashboard')
         }catch(err){
             console.warn("Erro de rede", err)
         }
