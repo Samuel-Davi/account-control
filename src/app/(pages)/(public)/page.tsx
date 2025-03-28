@@ -6,6 +6,7 @@ import { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '@/app/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import Loading from '@/app/components/Loading'
+import validator from 'validator'
 
 export default function FirstPage(){
 
@@ -45,6 +46,10 @@ export default function FirstPage(){
       setSuccess(false)
     }
   }, [success, setSuccess])
+  
+  const forgotPassword = () => {
+    router.push('forgot-password')
+  }
 
   return (
     <div className="flex min-h-full items-center flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -62,9 +67,14 @@ export default function FirstPage(){
         <div className="mt-10 w-4/5 sm:mx-auto sm:w-full sm:max-w-sm">
           <form onSubmit={handleSubmit(SignIn)} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
-                Email address
-              </label>
+              <div className='flex justify-between'>
+                <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
+                  Email address
+                </label>
+                <div className="text-sm">
+                  <span onClick={() => {router.push('/register')}} className="text-sm font-semibold underline text-indigo-600 hover:text-indigo-500 cursor-pointer" >Not a user?</span>
+                </div>
+              </div>
               <div className="mt-2">
                 <input
                   {...register('email', {
@@ -84,13 +94,6 @@ export default function FirstPage(){
                 <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
                   Password
                 </label>
-                {/*<div className="text-sm">
-                  <a onClick={() => {
-                    alert("")
-                  }} className="font-semibold text-indigo-600 hover:text-indigo-500">
-                    Forgot password?
-                  </a>
-                </div>*/}
               </div>
               <div className="mt-2">
                 <input
@@ -108,7 +111,7 @@ export default function FirstPage(){
             
             <div className='flex justify-between w-full'>
               <Checkbox name='aceito' label='Remember me' isChecked={isChecked} onChange={(e) => setIsChecked(e.target.checked)}/>
-              <span onClick={() => {router.push('/register')}} className="text-sm font-semibold underline text-indigo-600 hover:text-indigo-500 cursor-pointer" >Not a user?</span>
+              <span onClick={() => forgotPassword()} className="text-sm text-end font-semibold underline text-indigo-600 hover:text-indigo-500 cursor-pointer" >Forgot Password?</span>
             </div>
 
             <div>

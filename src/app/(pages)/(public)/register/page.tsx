@@ -62,8 +62,8 @@ export default function SignUp(){
                 </h2>
               </div>
       
-              <div className="mt-10 w-4/5 sm:w-full sm:max-w-md">
-                <form onSubmit={handleSubmit(SignUp)} className="space-y-6">
+              <div className="mt-10 w-full md:w-4/5 lg:w-3/5 flex justify-center">
+                <form onSubmit={handleSubmit(SignUp)} className="space-y-6 w-full md:w-4/5">
                 <div className="flex items-center justify-between">
                     <label htmlFor="name" className="block text-sm/6 font-medium text-gray-900">
                       Name:

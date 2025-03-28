@@ -3,7 +3,8 @@ import { MiddlewareConfig, NextRequest, NextResponse } from "next/server"
 const publicRoutes = [
     {path: '/register', whenAuthenticated: 'redirect'},
     {path: '/', whenAuthenticated: 'redirect'},
-    {path: '/services/auth', whenAuthenticated: 'next'}
+    {path: '/forgot-password', whenAuthenticated: 'redirect'},
+    {path: '/reset-password', whenAuthenticated: 'redirect'}
 ] as const
 
 const REDIRECT_WHEN_NOT_AUTHENTICATED_ROUTE = '/'
@@ -12,7 +13,19 @@ export function middleware(request: NextRequest){
     const path = request.nextUrl.pathname
     const publicRoute = publicRoutes.find(route => route.path === path)
     const authToken = request.cookies.get('account_token')
+    const resetToken = request.cookies.get('token_reset')
     console.log(authToken)
+
+    if(resetToken && publicRoute?.path == "/reset-password"){
+        return NextResponse.next()
+    }
+
+    if(!resetToken && publicRoute?.path == "/reset-password"){
+        const redirectUrl = request.nextUrl.clone()
+        redirectUrl.pathname = REDIRECT_WHEN_NOT_AUTHENTICATED_ROUTE
+
+        return NextResponse.redirect(redirectUrl)
+    }
 
     if(!authToken && publicRoute){
         return NextResponse.next()    
