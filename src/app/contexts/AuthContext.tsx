@@ -111,7 +111,7 @@ export function AuthProvider({ children }: AuthProviderProps){
     
     useEffect(() => {
         fetchData()
-    }, [])
+    })
 
     async function signIn({email, password, timeToken} : SignInData){
         try{
@@ -134,7 +134,6 @@ export function AuthProvider({ children }: AuthProviderProps){
     
             //api.defaults.headers['Authorization'] = `Bearer ${resUser.token}`
             setSuccess(true)
-    
             router.push('/dashboard')
         }catch(err){
             console.warn("Erro de rede", err)

@@ -189,15 +189,15 @@ export default function Transactions(){
         <div className="flex h-4/5 flex-col items-center">
             <div className="h-5/6 w-4/5 bg-white shadow-md p-4 m-4">
                 <div className="border-b pb-2 mb-2">
-                    <h2 className="text-gray-700 font-medium">Transaction History - {user?.name}</h2>
+                    <h2 className="text-gray-700 font-medium">Histórico de Transação - {user?.name}</h2>
 
                 </div>
                 <div className="flex justify-between items-center text-sm py-2">
-                    <span className="w-36 text-center">Date</span>
-                    <span className="w-36 text-center">Description</span>
-                    <span className="hidden sm:block w-36 text-center">Category</span>
-                    <span className="w-36 text-center">Amount</span>
-                    <span className="w-36 text-center">Options</span>
+                    <span className="w-36 text-center">Data</span>
+                    <span className="w-36 text-center">Descrição</span>
+                    <span className="hidden sm:block w-36 text-center">Categoria</span>
+                    <span className="w-36 text-center">Valor</span>
+                    <span className="w-36 text-center">Opções</span>
                 </div>
                 <div className="h-5/6 overflow-auto">
                     {transactions?.map(transaction => (
@@ -240,9 +240,9 @@ export default function Transactions(){
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -50 }}
                     transition={{ duration: 0.3, ease: "easeOut" }}
-                    className="bg-white p-6 rounded-lg shadow-lg w-96 h-3/4"
+                    className="bg-white p-6 rounded-lg shadow-lg w-96 h-3/5 ld:h-3/4"
                 >
-                    <h2 className="text-center text-xl font-bold mb-4">Add Transaction</h2>
+                    <h2 className="text-center text-xl font-bold mb-4">Adicionar Transação</h2>
                     <form onSubmit={handleSubmit(createTransaction)} className="h-5/6 flex flex-col justify-around items-center">
                         <label className="w-4/5 block">
                             Valor:
@@ -320,7 +320,7 @@ export default function Transactions(){
                     transition={{ duration: 0.3, ease: "easeOut" }}
                     className="bg-white p-6 rounded-lg shadow-lg w-96 h-3/4"
                 >
-                    <h2 className="text-center text-xl font-bold mb-4">Edit Transaction</h2>
+                    <h2 className="text-center text-xl font-bold mb-4">Editar Transação</h2>
                     <form onSubmit={handleSubmit(updateTransaction)} className="h-5/6 flex flex-col justify-around items-center">
                         <label className="w-4/5 block">
                             Valor:
@@ -383,9 +383,9 @@ export default function Transactions(){
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -50 }}
                     transition={{ duration: 0.3, ease: "easeOut" }}
-                    className="bg-white p-6 rounded-lg shadow-lg w-96 h-1/4"
+                    className="bg-white p-6 rounded-lg shadow-lg w-96 h-1/5 flex flex-col justify-center"
                 >
-                    <h2 className="text-center text-xl font-bold mb-4">Delete Transaction</h2>
+                    <h2 className="text-center text-xl font-bold mb-4">Deletar Transação</h2>
                     
                     <div className="flex justify-center gap-2 mt-4">
                             <button

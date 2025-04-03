@@ -6,24 +6,30 @@ import { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '@/app/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import Loading from '@/app/components/Loading'
-import validator from 'validator'
-
+import isValidEmail from '@/app/lib/validEmail'
 export default function FirstPage(){
 
   const { register, handleSubmit } = useForm();
 
   const {success, setSuccess, error, signIn } = useContext(AuthContext);
 
+  //estados de controle do form
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isChecked, setIsChecked] = useState(false)
   const [timeToken, setTimeToken] = useState("1h")
   const [loading, setLoading] = useState(false)
+  const [passwordVisible, setPasswordVisible] = useState(false)
 
   const router = useRouter()
 
   async function SignIn(){
     setLoading(true)
+    if(!isValidEmail(email) || password === ""){
+      alert("Preencha os campos corretamente!!!")
+      setLoading(false)
+      return;
+    }
     await signIn({email, password, timeToken})
   }
 
@@ -60,7 +66,7 @@ export default function FirstPage(){
             className="mx-auto h-10 w-auto"
           />
           <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-            Sign in to your account
+            Entre na sua conta
           </h2>
         </div>
 
@@ -69,10 +75,10 @@ export default function FirstPage(){
             <div>
               <div className='flex justify-between'>
                 <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
-                  Email address
+                  Email:
                 </label>
                 <div className="text-sm">
-                  <span onClick={() => {router.push('/register')}} className="text-sm font-semibold underline text-indigo-600 hover:text-indigo-500 cursor-pointer" >Not a user?</span>
+                  <span onClick={() => {router.push('/register')}} className="text-sm font-semibold underline text-indigo-600 hover:text-indigo-500 cursor-pointer" >Novo Usuário?</span>
                 </div>
               </div>
               <div className="mt-2">
@@ -92,26 +98,33 @@ export default function FirstPage(){
             <div>
               <div className="flex items-center justify-between">
                 <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
-                  Password
+                  Senha
                 </label>
               </div>
-              <div className="mt-2">
+              <div className="mt-2 flex justify-end">
                 <input
                   {...register('password', {
                     onChange: (e) => setPassword(e.target.value)
                   })}
                   value={password}
                   id='password'
-                  type='password' 
-                  placeholder="password"
+                  type={passwordVisible ? 'text' :'password'} 
+                  placeholder="senha"
                   className="block w-full rounded-md border-indigo-400 border-2 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2  focus:outline-indigo-600 sm:text-sm/6"
                 />
+                <button
+                  type="button"
+                  onClick={() => setPasswordVisible(prev => !prev)}
+                  className="absolute mt-5 mr-2 transform -translate-y-1/2 text-xl"
+                >
+                  {passwordVisible ? '👁️' : '🙈'}
+                </button>
               </div>
             </div>
             
             <div className='flex justify-between w-full'>
-              <Checkbox name='aceito' label='Remember me' isChecked={isChecked} onChange={(e) => setIsChecked(e.target.checked)}/>
-              <span onClick={() => forgotPassword()} className="text-sm text-end font-semibold underline text-indigo-600 hover:text-indigo-500 cursor-pointer" >Forgot Password?</span>
+              <Checkbox name='aceito' label='Lembre de mim' isChecked={isChecked} onChange={(e) => setIsChecked(e.target.checked)}/>
+              <span onClick={() => forgotPassword()} className="text-sm text-end font-semibold underline text-indigo-600 hover:text-indigo-500 cursor-pointer" >Esqueci minha senha</span>
             </div>
 
             <div>
@@ -119,7 +132,7 @@ export default function FirstPage(){
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Sign in
+                Entrar
               </button>
             </div>
           </form>

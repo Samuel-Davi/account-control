@@ -47,28 +47,28 @@ export default function Header(){
     const [loading, setLoading] = useState(false)
     const [uploadModal, setUploadModal] = useState(false)
 
-    useEffect(() => {
-        effectSaldo()
-    }, [])
-
     const effectSaldo = async () => {
         const res = await getSaldo()
         setSaldoControlado(res)
     }
+
+    useEffect(() => {
+        effectSaldo()
+    })
     
     useEffect(() => {
         setSaldoControlado(saldo)
     }, [saldo])
     
 
-    useEffect(() => {
-        getColor()
-    }, [saldoControlado])
-
     const getColor = () => {
         if(saldoControlado) return saldoControlado >= 0.0 ? 6 : 1;
         else return 6
     }
+
+    useEffect(() => {
+        getColor()
+    }, [saldoControlado])
 
     const handleClick = async () => {
         setRotation(rotation + 360)

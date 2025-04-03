@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import validator from 'validator'
 import { api } from "@/app/lib/api";
 import { setCookie } from "cookies-next";
+import isValidEmail from "@/app/lib/validEmail";
+import Loading from "@/app/components/Loading";
 
 export default function ForgotPassword(){
 
@@ -15,12 +16,9 @@ export default function ForgotPassword(){
   const [code, setCode] = useState("")
   const [realCode, setRealCode] = useState("")
   const [clicado, setClicado] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const router = useRouter()
-
-  function isValidEmail(email: string): boolean {
-    return validator.isEmail(email)
-  }
 
   const sendCode = () => {
     setClicado(true)
@@ -32,6 +30,7 @@ export default function ForgotPassword(){
   }
 
   const sendEmail  = async (email: string, realCode: string) => {
+    setLoading(true)
     try{
         const response = await fetch(`${api}/send-email`, {
             method: "POST",
@@ -42,9 +41,11 @@ export default function ForgotPassword(){
         if (!response.ok) {
           throw new Error('Erro ao enviar e-mail');
         }
+        setLoading(false)
         setEnviado(true)
       } catch (error) {
         console.error("Error ao enviar email:", error)
+        setLoading(false)
         alert("Erro ao enviar email!")
       }
   }
@@ -53,12 +54,27 @@ export default function ForgotPassword(){
     if (clicado) sendEmail(email, realCode)
   }, [realCode, setRealCode])
 
-  const confirmCode = () => {
+  const confirmCode = async () => {
+    setLoading(true)
     if(code === realCode)  {
-        setCookie("token_reset", "resetar");
-        router.push(`/reset-password?email=${email}`);
+
+      const secret_key = process.env.NEXT_PUBLIC_RESET_SECRET_KEY ?? "naofoi"
+      let token;
+
+      await fetch(`${api}/get-jwt`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, secret_key})
+      }).then(async (response) => {
+        const res = await response.json();
+        token = res.token;
+        setCookie("token_reset", token);
+      })
+      setLoading(false);
+      localStorage.setItem("resetEmail", email);
+      router.push('/reset-password');
     }
-    else alert("Código inválido!")
+    else alert("Código inválido!"); setLoading(false);
   }
 
     return (
@@ -77,7 +93,7 @@ export default function ForgotPassword(){
                         className="mx-auto h-10 w-auto"
                         />
                         <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-                        Reset Password
+                        Mudar Senha
                         </h2>
                     </div>
 
@@ -109,7 +125,7 @@ export default function ForgotPassword(){
                             type="submit"
                             className="flex w-3/5 justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                             >
-                            Confirm
+                            Confirmar
                             </button>
                         </div>
                         </form>
@@ -138,6 +154,7 @@ export default function ForgotPassword(){
                     </button>
                 </div>
               )}
+              {loading && <Loading/>}
             </div>
     )
   }

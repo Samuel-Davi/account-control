@@ -1,3 +1,5 @@
+"use client"
+
 import { motion } from 'framer-motion'
 import imgLoading from '../../../public/assets/images/loading.png'
 
@@ -11,7 +13,7 @@ export default function Loading(){
                 transition={{ duration: 0.3, ease: "easeOut" }}
                 className="flex flex-col justify-around items-center bg-white p-6 rounded-lg shadow-lg w-48 h-1/4"
             >
-                <h2>Loading...</h2>
+                <h2>Carregando...</h2>
                 <img src={imgLoading.src} alt="loading" className="w-16 h-16 animate-spin" />
             </motion.div>
         </div>

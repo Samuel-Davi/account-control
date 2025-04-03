@@ -16,31 +16,16 @@ export default function ChoiceBox({setState, preCategory, preCategoryType }: Cho
   const [selectedCategory, setSelectedCategory] = useState<number | null>(preCategory ? preCategory : null);
   const [loading, setLoading] = useState(false)
 
-  const delay = (amount = 750) => new Promise(resolve => setTimeout(resolve, amount))
-  
-
-  // Buscar categorias do backend
-  useEffect(() => {
-    setLoading(true)
-    fetch(`${api}/getCategoriesByType?type=${preCategoryType}`) // Ajuste a URL do backend
-      .then((res) => res.json())
-      .then((data) => setCategories(data.categories))
-      .catch((err) => console.error("Erro ao buscar categorias:", err));
-  }, []);
-
-  const delayWait = async () => {
-    await delay()
-  }
-
   useEffect(() => {
     setLoading(true);
-    delayWait()
+    //delayWait()
     fetch(`${api}/getCategoriesByType?type=${preCategoryType}`) // Ajuste a URL do backend
       .then((res) => res.json())
       .then((data) => setCategories(data.categories))
       .catch((err) => console.error("Erro ao buscar categorias:", err));
     
   }, [ preCategoryType ]);
+  
   useEffect(() => {
     setLoading(false); 
   }, [categories])

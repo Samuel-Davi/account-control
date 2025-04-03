@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from "react"
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import Loading from "@/app/components/Loading";
+import Image from "next/image";
 
 export default function SignUp(){
 
@@ -52,21 +53,21 @@ export default function SignUp(){
                   </button>
               </div>
               <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                <img
+                <Image
                   alt="Your Company"
                   src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
                   className="mx-auto h-10 w-auto"
                 />
                 <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-                  Sign Up
+                  Cadastre-se
                 </h2>
               </div>
       
-              <div className="mt-10 w-full md:w-4/5 lg:w-3/5 flex justify-center">
+              <div className="mt-10 w-4/5 lg:w-3/5 flex justify-center">
                 <form onSubmit={handleSubmit(SignUp)} className="space-y-6 w-full md:w-4/5">
                 <div className="flex items-center justify-between">
                     <label htmlFor="name" className="block text-sm/6 font-medium text-gray-900">
-                      Name:
+                      Nome:
                     </label>
                     <div className="mt-2 w-3/4">
                       <input
@@ -76,7 +77,7 @@ export default function SignUp(){
                         value={name}
                         id='name'
                         type='name'
-                        placeholder="name"
+                        placeholder="nome"
                         className="block w-full rounded-md border-indigo-400 border-2 px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-indigo-600 sm:text-sm/6"
                       />
                     </div>
@@ -102,7 +103,7 @@ export default function SignUp(){
                   <div className="flex justify-between">
                     <div className="flex items-center justify-between">
                       <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
-                        Password:
+                        Senha:
                       </label>
                     </div>
                     <div className="mt-2 w-3/4">
@@ -113,7 +114,7 @@ export default function SignUp(){
                         value={password}
                         id='password'
                         type='password' 
-                        placeholder="password"
+                        placeholder="senha"
                         className="block w-full rounded-md border-indigo-400 border-2 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2  focus:outline-indigo-600 sm:text-sm/6"
                       />
                     </div>
@@ -122,7 +123,7 @@ export default function SignUp(){
                   <div className="flex justify-between">
                     <div className="flex items-center justify-between">
                       <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
-                        Code:
+                        Código:
                       </label>
                     </div>
                     <div className="mt-2 w-3/4">
@@ -133,7 +134,7 @@ export default function SignUp(){
                         value={code}
                         id='code'
                         type='code' 
-                        placeholder="code"
+                        placeholder="código"
                         className="block w-full rounded-md border-indigo-400 border-2 bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2  focus:outline-indigo-600 sm:text-sm/6"
                       />
                     </div>
@@ -144,7 +145,7 @@ export default function SignUp(){
                       type="submit"
                       className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >
-                      Sign Up
+                      Cadastrar
                     </button>
                   </div>
                 </form>
