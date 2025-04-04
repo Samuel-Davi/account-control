@@ -5,16 +5,16 @@ import { Categories } from "@/app/models/Categories";
 import { Transaction } from "@/app/models/Transaction";
 
 //layout imports
-import { motion } from 'framer-motion'
 import Span from "@/app/components/Span";
 import addImg from '../../../../../public/assets/images/icons8-add-24.png'
 import delImg from '../../../../../public/assets/images/trash.png'
 import edtImg from '../../../../../public/assets/images/pen.png'
-import ChoiceBox from "@/app/components/ChoiceBox";
+import refreshImg from '../../../../../public/assets/images/refresh2.png'
+import clearImg from '../../../../../public/assets/images/eraser.png'
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 //react imports
-import { useContext, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "@/app/contexts/AuthContext";
 
 //other imports
@@ -22,6 +22,8 @@ import { format, parse } from "date-fns";
 import { api } from "@/app/lib/api";
 import { getCookie } from "cookies-next";
 import Loading from "@/app/components/Loading";
+import { AddComponent, DeleteComponent, EditComponent } from "@/app/components/TransactionsComponents";
+import ChoiceBox from "@/app/components/ChoiceBox";
 
 export default function Transactions(){
 
@@ -38,7 +40,6 @@ export default function Transactions(){
     const [transactionId, setTransactionId] = useState(0)
 
     //add form controller
-    const {handleSubmit } = useForm();
     const [description, setDescription] = useState('')
     const [amount, setAmount] = useState<number | null> (0.0)
     const [selectedIndex, setSelectedIndex] = useState<number>(0)
@@ -50,6 +51,13 @@ export default function Transactions(){
     const [editCategoryId, setEditCategoryId] = useState<number>(0)
     const [editDescription, setEditDescription] = useState('')
     const [editAmount, setEditAmount] = useState<number | null>(0.0)
+
+    //search controllers
+    const [searchDescription, setSearchDescription] = useState("")
+    const [transactionsFiltered, setTransactionsFiltered] = useState<Array<Transaction>>()
+    const [indexFiltered, setIndexFiltered] = useState<number>(0)
+    const [categoryTypeFiltered, setCategoryTypeFiltered] = useState(false)
+    const scrollRef = useRef<HTMLDivElement>(null)
 
     const fetchs = async () => {
         setLoading(true)
@@ -118,7 +126,6 @@ export default function Transactions(){
             alert("Preencha os dados corretamente")
         }else{
             const dateObj = parse(editDate, "yyyy-MM-dd'T'HH:mm", new Date());
-            console.log("data: ", dateObj)
             const response = await fetch(`${api}/updateTransaction`, {
                 method: 'PUT',
                 headers: {
@@ -185,28 +192,94 @@ export default function Transactions(){
         setDeleteIsOpen(false)
     }
 
-    return (
-        <div className="flex h-4/5 flex-col items-center">
-            <div className="h-5/6 w-4/5 bg-white shadow-md p-4 m-4">
-                <div className="border-b pb-2 mb-2">
-                    <h2 className="text-gray-700 font-medium">Histórico de Transação - {user?.name}</h2>
+    ////filtragens
+    useEffect(() => {
+        setTransactionsFiltered(transactions)
+    }, [transactions, setTransactions])
 
+    const scroll = (direction: "left" | "right") => {
+        if (scrollRef.current) {
+          const amount = 200; // Ajuste a distância da rolagem
+          scrollRef.current.scrollBy({ left: direction === "left" ? -amount : amount, behavior: "smooth" });
+        }
+      };
+
+    //filtragem por descrição
+    useEffect(() => {
+        const filteredTransactions = transactions?.filter(t => 
+            t.description.toLowerCase().includes(searchDescription.toLowerCase())
+        )
+        setTransactionsFiltered(filteredTransactions)
+    }, [searchDescription, setSearchDescription, setTransactionsFiltered])
+
+    //filtragem por categoria
+    useEffect(() => {
+        if(indexFiltered !== 0){
+            const filteredTransactions = transactions?.filter(t => 
+                t.category_id === indexFiltered
+            )
+            setTransactionsFiltered(filteredTransactions)
+        }else{
+            setTransactionsFiltered(transactions)
+        }
+    }, [indexFiltered, setIndexFiltered])
+
+    return (
+        <div className="flex h-full flex-col items-center">
+            <div className="h-[75%] lg:h-[70%] w-4/5 bg-white shadow-md p-4 m-4">
+                <div className="h-[10%] border-b">
+                    <h2 className="text-gray-700 font-medium">Histórico de Transação - {user?.name}</h2>
                 </div>
-                <div className="flex justify-between items-center text-sm py-2">
-                    <span className="w-36 text-center">Data</span>
-                    <span className="w-36 text-center">Descrição</span>
-                    <span className="hidden sm:block w-36 text-center">Categoria</span>
-                    <span className="w-36 text-center">Valor</span>
-                    <span className="w-36 text-center">Opções</span>
+
+                <div className="w-full flex justify-between gap-1">
+                    <button className="lg:hidden bg-white shadow-md rounded-full" onClick={() => scroll("left")}>
+                        <ChevronLeft />
+                    </button>
+
+                    <div ref={scrollRef}  className='border-b h-[12%] max-w-[75%] lg:min-w-[100%] scroll-smooth scrollbar-hide overflow-x-auto flex justify-around items-center'>
+                        <div className="min-w-[100%] lg:min-w-[50%] flex justify-center">
+                            <input
+                                type="text"
+                                className="lg:w-[60%] w-full border p-1 rounded"
+                                placeholder="Pesquisar..."
+                                value={searchDescription}
+                                onChange={(e) => {setSearchDescription(e.target.value)}}
+                            />
+                        </div>
+                        <div className="min-w-[100%] lg:min-w-[50%] flex justify-center gap-2 items-center">
+                            <img onClick={() => {
+                                setIndexFiltered(0)
+                            }} className="w-6 h-6 cursor-pointer" src={clearImg.src} alt="clear" />
+                            <div className="flex items-center justify-center">
+                                <ChoiceBox state={indexFiltered} preCategoryType={categoryTypeFiltered === false ? 0 : 1} setState={setIndexFiltered}/>
+                            </div> 
+                            <img onClick={() => {
+                                setIndexFiltered(!categoryTypeFiltered ? 6 : 1)
+                                setCategoryTypeFiltered(prev => !prev)
+                            }} className="cursor-pointer w-4 h-4" src={refreshImg.src} alt="refresh" />
+                        </div>                
+                    </div>
+                    
+                    <button className="lg:hidden bg-white shadow-md rounded-full" onClick={() => scroll("right")}>
+                        <ChevronRight />
+                    </button>
                 </div>
-                <div className="h-5/6 overflow-auto">
-                    {transactions?.map(transaction => (
-                        <div key={transaction.id} className="flex justify-between items-center text-sm py-2">
-                            <span className="w-36 text-center">{new Date(transaction.transaction_date).toLocaleString("pt-BR")}</span>
-                            <span className="w-36 text-center">{transaction.description}</span>
-                            <span className="hidden sm:block w-36 text-center">{getCategory(transaction.category_id)}</span>
-                            <span className="w-36 text-center"><Span category_id={transaction.category_id} value={transaction.amount.toString() + "R$"}></Span></span>
-                            <div className="w-36 text-center">
+
+                <div className="flex h-[10%] justify-between items-center text-sm border-b">
+                    <span className="w-1/5 text-center">Descrição</span>
+                    <span className="hidden sm:block w-1/5 text-center">Categoria</span>
+                    <span className="w-1/5 text-center">Valor</span>
+                    <span className="w-1/5 text-center">Data</span>
+                    <span className="w-1/5 text-center">Opções</span>
+                </div>
+                <div className="h-[68%] overflow-auto">
+                    {transactionsFiltered?.map(transaction => (
+                        <div key={transaction.id} className="flex justify-between items-center text-sm border-b py-1">
+                            <span className="w-1/5 overflow-auto lg:border-r text-center">{transaction.description}</span>
+                            <span className="hidden sm:block w-1/5 lg:border-r text-center">{getCategory(transaction.category_id)}</span>
+                            <span className="w-1/5 lg:border-r text-center"><Span category_id={transaction.category_id} value={transaction.amount.toString() + "R$"}></Span></span>
+                            <span className="w-1/5 overflow-auto lg:border-r text-center">{new Date(transaction.transaction_date).toLocaleString("pt-BR")}</span>
+                            <div className="w-1/5 lg:border-r text-center">
                                 <button onClick={() => {
                                         editTransaction(
                                             transaction.id,
@@ -216,13 +289,13 @@ export default function Transactions(){
                                             new Date(transaction.transaction_date)
                                         )
                                     }} className="border-4 border-white bg-blue-400 text-white rounded-xl p-1 hover:bg-blue-600">
-                                    <img className="w-6" src={edtImg.src} alt="edit" />
+                                    <img className="w-5" src={edtImg.src} alt="edit" />
                                 </button>
                                 <button onClick={() => {
                                     setTransactionId(transaction.id)
                                     setDeleteIsOpen(true)
                                 }} className="border-4 border-white bg-red-600 text-white rounded-xl p-1 hover:bg-red-700">
-                                    <img className="w-6" src={delImg.src} alt="del" />
+                                    <img className="w-5" src={delImg.src} alt="del" />
                                 </button>
                             </div>
                         </div>
@@ -234,177 +307,39 @@ export default function Transactions(){
             </button>
             {/* add modal */}
             {isOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                <motion.div
-                    initial={{ opacity: 0, y: -50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -50 }}
-                    transition={{ duration: 0.3, ease: "easeOut" }}
-                    className="bg-white p-6 rounded-lg shadow-lg w-96 h-3/5 ld:h-3/4"
-                >
-                    <h2 className="text-center text-xl font-bold mb-4">Adicionar Transação</h2>
-                    <form onSubmit={handleSubmit(createTransaction)} className="h-5/6 flex flex-col justify-around items-center">
-                        <label className="w-4/5 block">
-                            Valor:
-                            <input
-                            type="Number"
-                            className="w-full border p-2 rounded mt-1"
-                            placeholder="Digite o valor"
-                            value={amount ? amount : 0}
-                            onChange={(e) => {setAmount(e.target.valueAsNumber)}}
-                            />
-                        </label>
-                        <label className="block font-medium">Escolha uma categoria:</label>
-
-                        <div className="flex w-4/5 justify-around">
-                            <div className="flex w-1/3 justify-around">
-                                <input 
-                                checked={!categoryType} 
-                                type="radio" 
-                                name="gastos" 
-                                id="gastos" 
-                                onChange={() => setCategoryType(prev => !prev)}/>
-                                <p>Gastos</p>
-                            </div>
-
-                            <div className="flex w-1/3 justify-around">
-                                <input 
-                                checked={categoryType}
-                                onChange={() => setCategoryType(prev => !prev)}
-                                type="radio" 
-                                name="ganhos" 
-                                id="ganhos" />
-                                <p>Ganhos</p> 
-                            </div>
-                        </div>
-
-                        <ChoiceBox preCategoryType={categoryType === false ? 0 : 1} setState={setSelectedIndex}/>                 
-
-                        <label className="w-4/5 block">
-                            Descrição:
-                            <input
-                            type="text"
-                            className="w-full border p-2 rounded mt-1"
-                            placeholder="Digite a descrição"
-                            value={description}
-                            onChange={(e) => {setDescription(e.target.value)}}
-                            />
-                        </label>
-
-                        <div className="flex justify-end gap-2 mt-4">
-                            <button
-                            type="button"
-                            onClick={() => setIsOpen(false)}
-                            className="px-4 py-2 border rounded-md"
-                            >
-                            Cancelar
-                            </button>
-                            <button
-                            type="submit"
-                            className="px-4 py-2 bg-blue-600 text-white rounded-md"
-                            >
-                            Enviar
-                            </button>
-                        </div>
-                    </form>
-                </motion.div>
-                </div>
+                <AddComponent
+                categoryType={categoryType}
+                setCategoryType={setCategoryType}
+                amount={amount}
+                setAmount={setAmount}
+                description={description}
+                setDescription={setDescription}
+                createTransaction={createTransaction}
+                setSelectedIndex={setSelectedIndex}
+                setIsOpen={setIsOpen}
+                />
             )}
             {/* edit modal */}
             {editIsOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                <motion.div
-                    initial={{ opacity: 0, y: -50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -50 }}
-                    transition={{ duration: 0.3, ease: "easeOut" }}
-                    className="bg-white p-6 rounded-lg shadow-lg w-96 h-3/4"
-                >
-                    <h2 className="text-center text-xl font-bold mb-4">Editar Transação</h2>
-                    <form onSubmit={handleSubmit(updateTransaction)} className="h-5/6 flex flex-col justify-around items-center">
-                        <label className="w-4/5 block">
-                            Valor:
-                            <input
-                            type="Number"
-                            className="w-full border p-2 rounded mt-1"
-                            placeholder="Digite o valor"
-                            value={editAmount ? editAmount : 0}
-                            onChange={(e) => {setEditAmount(e.target.valueAsNumber)}}
-                            />
-                        </label>
-
-                        <ChoiceBox preCategory={editCategoryId} preCategoryType={editCategoryId === 6 ? 1 : 0} setState={setEditCategoryId}/>                 
-
-                        <label className="w-4/5 block">
-                            Descrição:
-                            <input
-                            type="text"
-                            className="w-full border p-2 rounded mt-1"
-                            placeholder="Digite a descrição"
-                            value={editDescription}
-                            onChange={(e) => {setEditDescription(e.target.value)}}
-                            />
-                        </label>
-
-                        <label>
-                            Data:
-                            <input
-                            type="datetime-local"
-                            className="w-full border p-2 rounded mt-1"
-                            value={editDate}
-                            onChange={(e) => {setEditDate(e.target.value)}}
-                            />
-                        </label>
-
-                        <div className="flex justify-end gap-2 mt-4">
-                            <button
-                            type="button"
-                            onClick={() => setEditIsOpen(false)}
-                            className="px-4 py-2 border rounded-md"
-                            >
-                            Cancelar
-                            </button>
-                            <button
-                            type="submit"
-                            className="px-4 py-2 bg-blue-600 text-white rounded-md"
-                            >
-                            Enviar
-                            </button>
-                        </div>
-                    </form>
-                </motion.div>
-                </div>
+                <EditComponent
+                editAmount={editAmount}
+                setEditAmount={setEditAmount}
+                editCategoryId={editCategoryId}
+                editDescription={editDescription}
+                setEditDescription={setEditDescription}
+                editDate={editDate}
+                setEditDate={setEditDate}
+                setEditIsOpen={setEditIsOpen}
+                updateTransaction={updateTransaction}
+                setEditCategoryId={setEditCategoryId}
+                />
             )}
             {/* delete modal */}
             {deleteIsOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                <motion.div
-                    initial={{ opacity: 0, y: -50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -50 }}
-                    transition={{ duration: 0.3, ease: "easeOut" }}
-                    className="bg-white p-6 rounded-lg shadow-lg w-96 h-1/5 flex flex-col justify-center"
-                >
-                    <h2 className="text-center text-xl font-bold mb-4">Deletar Transação</h2>
-                    
-                    <div className="flex justify-center gap-2 mt-4">
-                            <button
-                            type="button"
-                            onClick={() => setDeleteIsOpen(false)}
-                            className="px-4 py-2 border rounded-md"
-                            >
-                            Cancelar
-                            </button>
-                            <button
-                            onClick={() => deleteTransaction()}
-                            type="button"
-                            className="px-4 py-2 bg-red-600 text-white rounded-md"
-                            >
-                            Deletar
-                            </button>
-                        </div>
-                </motion.div>
-                </div>
+                <DeleteComponent
+                setDeleteIsOpen={setDeleteIsOpen}
+                deleteTransaction={deleteTransaction}
+                />
             )}
             {loading && (<Loading/>)}
         </div>

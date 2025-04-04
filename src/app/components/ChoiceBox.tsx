@@ -7,11 +7,12 @@ import Loading from "./Loading";
 
 interface ChoiceBoxProps {
     setState: React.Dispatch<React.SetStateAction<number>>;
+    state?: number | null;
     preCategory?: number;
     preCategoryType: number;
 }
 
-export default function ChoiceBox({setState, preCategory, preCategoryType }: ChoiceBoxProps) {
+export default function ChoiceBox({setState, state = 0,  preCategory, preCategoryType }: ChoiceBoxProps) {
   const [categories, setCategories] = useState<Categories[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(preCategory ? preCategory : null);
   const [loading, setLoading] = useState(false)
@@ -30,11 +31,15 @@ export default function ChoiceBox({setState, preCategory, preCategoryType }: Cho
     setLoading(false); 
   }, [categories])
 
+  useEffect(() => {
+    setSelectedCategory(state)
+  }, [state])
+
   return (
-    <div className="flex flex-col w-4/5">
+    <div className="flex flex-col min-w-4/5">
       <div>
         <select
-          value={selectedCategory || ""}
+          value={selectedCategory || 0}
           onChange={(e) => {
               setSelectedCategory(Number(e.target.value))
               setState(Number(e.target.value))
@@ -42,7 +47,7 @@ export default function ChoiceBox({setState, preCategory, preCategoryType }: Cho
           className="mt-1 w-full bg-white p-2 border border-gray-300 rounded-md shadow-sm 
               focus:ring-blue-500 focus:border-blue-500 outline-none"
         >
-          <option value="" disabled>Selecione uma opção</option>
+          <option value={0} disabled>Selecione uma opção</option>
           {categories.map((category) => (
             <option key={category.id} value={category.id}>
               {category.name}

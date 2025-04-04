@@ -146,7 +146,7 @@ export default function Header(){
     return (
         <div>
             <header className="bg-white">
-                <nav aria-label="Global" className="mx-auto  flex w-full items-center justify-between p-6 lg:px-8">
+                <nav aria-label="Global" className="mx-auto flex w-full items-center justify-between p-6 lg:px-8">
                     <div className="w-2/5 lg:w-1/5 flex items-start justify-start">
                         <div className="w-full items-center flex justify-between">
 
@@ -227,16 +227,16 @@ export default function Header(){
                     </Popover>*/}
 
                     <Link href="/transactions" className="text-sm/6 font-semibold text-gray-900">
-                        Transactions
+                        Transações
                     </Link>
                     <Link href="/dashboard" className="text-sm/6 font-semibold text-gray-900">
-                        Dashboard
+                        Painel
                     </Link>
                     </PopoverGroup>
-                    <div className="hidden lg:flex">
-                    <a onClick={() => setLogOutModal(true)} className="text-sm/6 font-semibold cursor-pointer text-gray-900">
-                        Log out <span aria-hidden="true">&rarr;</span>
-                    </a>
+                    <div className="hidden lg:flex lg:w-1/5 lg:justify-center">
+                        <a onClick={() => setLogOutModal(true)} className="text-sm/6 font-semibold cursor-pointer text-gray-900">
+                            Sair <span aria-hidden="true">&rarr;</span>
+                        </a>
                     </div>
                 </nav>
                 <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
@@ -287,14 +287,14 @@ export default function Header(){
                             href="/transactions"
                             className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                             >
-                            Transactions
+                            Transações
                             </a>
                             <Link
                             onClick={() => setMobileMenuOpen(false)}
                             href="/dashboard"
                             className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                             >
-                            Dashboard
+                            Painel
                             </Link>
                         </div>
                         <div className="py-6">
@@ -305,7 +305,7 @@ export default function Header(){
                             }}
                             className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 cursor-pointer font-semibold text-gray-900 hover:bg-gray-50"
                             >
-                            Log out
+                            Sair
                             </a>
                         </div>
                         </div>
@@ -323,7 +323,7 @@ export default function Header(){
                     className="bg-white flex items-center p-6 rounded-lg shadow-lg w-96 h-1/4"
                 >
                     <div className='w-full h-2/3 flex flex-col justify-around items-center'>
-                        <h2>Want Log Out?</h2>
+                        <h2>Deseja Sair?</h2>
                         <div className='w-1/2 flex justify-around'>
                             <button className='hover:bg-blue-600 px-2 hover:text-white rounded-sm' onClick={() => setLogOutModal(false)}>Não</button>
                             <button className='hover:bg-red-600 px-2 hover:text-white rounded-sm' onClick={clearCookie}>Sim</button>
