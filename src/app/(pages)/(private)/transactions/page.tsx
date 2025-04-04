@@ -58,6 +58,8 @@ export default function Transactions(){
     const [indexFiltered, setIndexFiltered] = useState<number>(0)
     const [categoryTypeFiltered, setCategoryTypeFiltered] = useState(false)
     const scrollRef = useRef<HTMLDivElement>(null)
+    const [isFirst, setIsFirst] = useState(true)
+    const [isLast, setIsLast] = useState(false)
 
     const fetchs = async () => {
         setLoading(true)
@@ -199,7 +201,8 @@ export default function Transactions(){
 
     const scroll = (direction: "left" | "right") => {
         if (scrollRef.current) {
-          const amount = 200; // Ajuste a distância da rolagem
+            const { scrollWidth } = scrollRef.current;
+            const amount = scrollWidth; 
           scrollRef.current.scrollBy({ left: direction === "left" ? -amount : amount, behavior: "smooth" });
         }
       };
@@ -226,27 +229,31 @@ export default function Transactions(){
 
     return (
         <div className="flex h-full flex-col items-center">
-            <div className="h-[75%] lg:h-[70%] w-4/5 bg-white shadow-md p-4 m-4">
+            <div className="h-[75%] md:h-[70%] w-4/5 bg-white shadow-md p-4 m-4">
                 <div className="h-[10%] border-b">
                     <h2 className="text-gray-700 font-medium">Histórico de Transação - {user?.name}</h2>
                 </div>
 
                 <div className="w-full flex justify-between gap-1">
-                    <button className="lg:hidden bg-white shadow-md rounded-full" onClick={() => scroll("left")}>
+                    <button className={`${isFirst? "hidden" : ""} md:hidden bg-white shadow-md rounded-full`} onClick={() => {
+                        scroll("left")
+                        setIsLast(prev => !prev)
+                        setIsFirst(prev => !prev)
+                    }}>
                         <ChevronLeft />
                     </button>
 
-                    <div ref={scrollRef}  className='border-b h-[12%] max-w-[75%] lg:min-w-[100%] scroll-smooth scrollbar-hide overflow-x-auto flex justify-around items-center'>
-                        <div className="min-w-[100%] lg:min-w-[50%] flex justify-center">
+                    <div ref={scrollRef}  className='border-b h-[12%] max-w-[85%] md:min-w-[100%] no-scroll scroll-smooth scrollbar-hide overflow-x-auto flex justify-around items-center'>
+                        <div className="min-w-[100%] md:min-w-[50%] flex justify-center">
                             <input
                                 type="text"
-                                className="lg:w-[60%] w-full border p-1 rounded"
+                                className="md:w-[60%] w-full border p-1 rounded"
                                 placeholder="Pesquisar..."
                                 value={searchDescription}
                                 onChange={(e) => {setSearchDescription(e.target.value)}}
                             />
                         </div>
-                        <div className="min-w-[100%] lg:min-w-[50%] flex justify-center gap-2 items-center">
+                        <div className="min-w-[100%] md:min-w-[50%] flex justify-center gap-2 items-center">
                             <img onClick={() => {
                                 setIndexFiltered(0)
                             }} className="w-6 h-6 cursor-pointer" src={clearImg.src} alt="clear" />
@@ -260,7 +267,11 @@ export default function Transactions(){
                         </div>                
                     </div>
                     
-                    <button className="lg:hidden bg-white shadow-md rounded-full" onClick={() => scroll("right")}>
+                    <button className={`${isLast ? "hidden" : ""} md:hidden bg-white shadow-md rounded-full`} onClick={() => {
+                        scroll("right")
+                        setIsLast(prev => !prev)
+                        setIsFirst(prev => !prev)
+                    }}>
                         <ChevronRight />
                     </button>
                 </div>
