@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: "Roxyall Control",
   icons:{
     icon: {
-      url: "/favicon2.png",
+      url: "/favicon2.png?v=1",
       sizes: "128x128"
     }
   }
