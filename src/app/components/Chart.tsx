@@ -30,8 +30,24 @@ export default function PieArcLabel() {
         3: "Transporte",
         4: "Lazer",
         5: "Despesas Fixas",
-        6: "Ganhos"
+        6: "Ganhos",
+        7: "Outros"
     }
+
+    useEffect(() => {
+      fetch(`${api}/getTransactions`, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${getCookie("account_token")}`,
+            "Content-Type": "application/json"
+          },
+      })
+          .then(response => response.json())
+          .then(data => {
+              setSaveData(data.transactions);
+          })
+          .catch(error => console.error('Error:', error));
+    }, [])
 
     useEffect(() => {
         const categoryMap = new Map<string, number>();
@@ -65,21 +81,6 @@ export default function PieArcLabel() {
         setComData(false);
       }
     }, [data, setData])
-
-    useEffect(() => {
-      fetch(`${api}/getTransactions`, {
-          method: "GET",
-          headers: {
-            "Authorization": `Bearer ${getCookie("account_token")}`,
-            "Content-Type": "application/json"
-          },
-      })
-          .then(response => response.json())
-          .then(data => {
-              setSaveData(data.transactions);
-          })
-          .catch(error => console.error('Error:', error));
-    }, [])
 
     return (
       <div className='h-3/4 flex flex-col justify-center items-center'>

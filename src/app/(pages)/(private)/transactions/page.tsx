@@ -147,6 +147,7 @@ export default function Transactions(){
             }else{
                 console.error("Erro ao atualizar");
             }
+            setIndexFiltered(0)
             setEditIsOpen(false)
         }
     }
@@ -177,6 +178,7 @@ export default function Transactions(){
               } else {
                 console.error("Erro ao atualizar");
               }
+            setIndexFiltered(0)
             setLoading(false)
             setIsOpen(false)
         }
@@ -191,6 +193,7 @@ export default function Transactions(){
         } else {
             console.error("Erro ao deletar");
         }
+        setIndexFiltered(0)
         setDeleteIsOpen(false)
     }
 
@@ -243,7 +246,7 @@ export default function Transactions(){
                         <ChevronLeft />
                     </button>
 
-                    <div ref={scrollRef}  className='border-b h-[12%] max-w-[85%] md:min-w-[100%] no-scroll scroll-smooth scrollbar-hide overflow-x-auto flex justify-around items-center'>
+                    <div ref={scrollRef}  className='border-b h-[12%] max-w-[90%] md:min-w-[100%] no-scroll scroll-smooth scrollbar-hide overflow-x-auto flex justify-around items-center'>
                         <div className="min-w-[100%] md:min-w-[50%] flex justify-center">
                             <input
                                 type="text"
@@ -253,7 +256,7 @@ export default function Transactions(){
                                 onChange={(e) => {setSearchDescription(e.target.value)}}
                             />
                         </div>
-                        <div className="min-w-[100%] md:min-w-[50%] flex justify-center gap-2 items-center">
+                        <div className="min-w-[100%] md:min-w-[50%] flex justify-center gap-3 items-center">
                             <img onClick={() => {
                                 setIndexFiltered(0)
                             }} className="w-6 h-6 cursor-pointer" src={clearImg.src} alt="clear" />

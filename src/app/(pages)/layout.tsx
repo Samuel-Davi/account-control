@@ -5,8 +5,15 @@ import { AuthProvider } from "../contexts/AuthContext";
 
 
 export const metadata: Metadata = {
-  title: "Roxyall Control"
+  title: "Roxyall Control",
+  icons:{
+    icon: {
+      url: "/favicon2.png",
+      sizes: "128x128"
+    }
+  }
 }
+
 export default function RootLayout({
   children,
 }: Readonly<{
