@@ -1,4 +1,5 @@
 import { MiddlewareConfig, NextRequest, NextResponse } from "next/server"
+import { get } from '@vercel/edge-config'
 
 const publicRoutes = [
     {path: '/register', whenAuthenticated: 'redirect'},
@@ -9,11 +10,34 @@ const publicRoutes = [
 
 const REDIRECT_WHEN_NOT_AUTHENTICATED_ROUTE = '/'
 
-export function middleware(request: NextRequest){
+export const config: MiddlewareConfig = {
+    matcher: [
+        /*
+        * Match all request paths except for the ones starting with:
+        * - api (API routes)
+        * - _next/static (static files)
+        * - _next/image (image optimization files)
+        * - favicon.ico, sitemap.xml, robots.txt (metadata files)
+        */
+        '/((?!api|_next/static|_next/image|favicon2.png|sitemap.xml|robots.txt).*)',
+    ],
+}
+
+export async function middleware(request: NextRequest){
     const path = request.nextUrl.pathname
     const publicRoute = publicRoutes.find(route => route.path === path)
     const authToken = request.cookies.get('account_token')
 
+    const isMaintenanceMode = await get('maintenance')
+    console.log(isMaintenanceMode)
+    
+
+    if(isMaintenanceMode){
+        const redirectUrl = request.nextUrl.clone()
+        redirectUrl.pathname = `/maintenance`
+
+        return NextResponse.rewrite(redirectUrl)
+    }
 
     if(!authToken && publicRoute){
         return NextResponse.next()    
@@ -38,17 +62,4 @@ export function middleware(request: NextRequest){
     }
 
     return NextResponse.next()
-}
-
-export const config: MiddlewareConfig = {
-    matcher: [
-        /*
-        * Match all request paths except for the ones starting with:
-        * - api (API routes)
-        * - _next/static (static files)
-        * - _next/image (image optimization files)
-        * - favicon.ico, sitemap.xml, robots.txt (metadata files)
-        */
-        '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
-    ],
 }
