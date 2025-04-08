@@ -29,7 +29,6 @@ export async function middleware(request: NextRequest){
     const authToken = request.cookies.get('account_token')
 
     const isMaintenanceMode = await get('maintenance')
-    console.log(isMaintenanceMode)
     
 
     if(isMaintenanceMode){
